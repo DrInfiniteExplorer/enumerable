@@ -1,9 +1,9 @@
 #pragma once
 
-template <typename InType, typename OutType>
-struct DynamicCastEnumerable : InputRange<OutType>
+template <typename InType, typename OutType, typename Source>
+struct DynamicCastEnumerable : InputRange<OutType, DynamicCastEnumerable<InType, OutType, Source> >
 {
-	DynamicCastEnumerable(InputRange<InType> &source)
+	DynamicCastEnumerable(Source &source)
 		: m_source(source)
 	{}
 
@@ -28,6 +28,6 @@ struct DynamicCastEnumerable : InputRange<OutType>
 	}
 
 private:
-	InputRange<InType> &m_source;
+	Source m_source;
 };
 

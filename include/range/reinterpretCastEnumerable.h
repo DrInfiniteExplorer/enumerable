@@ -1,9 +1,9 @@
 #pragma once
 
-template <typename InType, typename OutType>
-struct ReinterpretCastEnumerable : InputRange<OutType>
+template <typename InType, typename OutType, typename Source>
+struct ReinterpretCastEnumerable : InputRange<OutType, ReinterpretCastEnumerable<InType, OutType, Source>>
 {
-	ReinterpretCastEnumerable(InputRange<InType> &source)
+	ReinterpretCastEnumerable(Source source)
 		: m_source(source)
 	{}
 
@@ -28,6 +28,6 @@ struct ReinterpretCastEnumerable : InputRange<OutType>
 	}
 
 private:
-	InputRange<InType> &m_source;
+	Source m_source;
 };
 

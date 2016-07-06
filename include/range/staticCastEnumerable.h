@@ -1,16 +1,11 @@
 #pragma once
 
-template <typename InType, typename OutType>
-struct StaticCastEnumerable : InputRange<OutType>
+template <typename InType, typename OutType, typename Source>
+struct StaticCastEnumerable : InputRange<OutType, StaticCastEnumerable<InType, OutType, Source>>
 {
-	StaticCastEnumerable(InputRange<InType> &source)
+	StaticCastEnumerable(Source &source)
 		: m_source(source)
 	{}
-
-	virtual void restart() override
-	{
-		m_source.restart();
-	}
 
 	virtual bool empty() override
 	{
@@ -28,6 +23,6 @@ struct StaticCastEnumerable : InputRange<OutType>
 	}
 
 private:
-	InputRange<InType> &m_source;
+	Source m_source;
 };
 

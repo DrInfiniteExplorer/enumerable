@@ -1,13 +1,12 @@
 #pragma once
 
-template <typename T>
+template <typename T, typename Source>
 struct InputRangeIterator
 {
-	InputRangeIterator(InputRange<T> &e, bool end)
+	InputRangeIterator(InputRange<T, Source> &e, bool end)
 		: m_e(e)
 		, m_end(end)
 	{
-		if (!end) e.restart();
 	}
 	T operator*() const
 	{
@@ -32,17 +31,17 @@ struct InputRangeIterator
 	}
 
 private:
-	InputRange<T> &m_e;
+	InputRange<T, Source> &m_e;
 	bool m_end;
 };
 
-template <typename T>
-InputRangeIterator<T> begin(InputRange<T> &a)
+template <typename T, typename Source>
+InputRangeIterator<T, Source> begin(InputRange<T, Source> &a)
 {
-	return InputRangeIterator<T>(a, false);
+	return InputRangeIterator<T, Source>(a, false);
 }
-template <typename T>
-InputRangeIterator<T> end(InputRange<T> &a)
+template <typename T, typename Source>
+InputRangeIterator<T, Source> end(InputRange<T, Source> &a)
 {
-	return InputRangeIterator<T>(a, true);
+	return InputRangeIterator<T, Source>(a, true);
 }

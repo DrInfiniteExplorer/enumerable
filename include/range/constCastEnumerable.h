@@ -1,9 +1,9 @@
 #pragma once
 
-template <typename InType, typename OutType>
-struct ConstCastEnumerable : InputRange<OutType>
+template <typename InType, typename OutType, typename Source>
+struct ConstCastEnumerable : InputRange<OutType, ConstCastEnumerable<InType, OutType, Source>>
 {
-	ConstCastEnumerable(InputRange<InType> &source)
+	ConstCastEnumerable(Source &source)
 		: m_source(source)
 	{}
 
@@ -28,6 +28,6 @@ struct ConstCastEnumerable : InputRange<OutType>
 	}
 
 private:
-	InputRange<InType> &m_source;
+	Source m_source;
 };
 

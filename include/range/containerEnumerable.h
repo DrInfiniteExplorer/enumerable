@@ -1,17 +1,12 @@
 #pragma once
 
 template <typename T, typename Container>
-struct ContainerEnumerable : public InputRange<T>
+struct ContainerEnumerable : public InputRange<T, ContainerEnumerable<T, Container>>
 {
 	ContainerEnumerable(Container&& container)
 		: m_container(container)
 		, m_iterator(container.begin())
 	{}
-
-	virtual void restart() override
-	{
-		m_iterator = m_container.begin();
-	}
 
 	virtual bool empty() override
 	{

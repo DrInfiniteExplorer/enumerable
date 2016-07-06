@@ -1,18 +1,11 @@
 #pragma once
 
-template <typename T, typename SetType>
-struct DistinctEnumerable : InputRange<T>
+template <typename T, typename SetType, typename Source>
+struct DistinctEnumerable : InputRange<T, DistinctEnumerable<T, SetType, Source>>
 {
-	DistinctEnumerable(InputRange<T> &source)
+	DistinctEnumerable(Source &source)
 		: m_source(source)
 	{}
-
-	virtual void restart() override
-	{
-		m_source.restart();
-		m_set.clear();
-		m_set.insert(m_source.front());
-	}
 
 	virtual bool empty() override
 	{
@@ -37,7 +30,7 @@ struct DistinctEnumerable : InputRange<T>
 	}
 
 private:
-	InputRange<T> &m_source;
+	Source m_source;
 	SetType m_set;
 };
 

@@ -1,18 +1,16 @@
 #pragma once
 
-template <typename InType, typename Func>
-struct SelectEnumerable : InputRange<typename std::result_of<Func(InType)>::type>
+template <typename InType, typename Func, typename Source>
+struct SelectEnumerable : InputRange<
+	typename std::result_of<Func(InType)>::type,
+	SelectEnumerable < InType, Func, Source >
+>
 {
 	typedef typename std::result_of<Func(InType)>::type RetType;
-	SelectEnumerable(InputRange<InType> &source, Func &&func)
+	SelectEnumerable(Source &source, Func &&func)
 		: m_source(source)
 		, m_func(func)
 	{}
-
-	virtual void restart() override
-	{
-		m_source.restart();
-	}
 
 	virtual bool empty() override
 	{
@@ -30,6 +28,6 @@ struct SelectEnumerable : InputRange<typename std::result_of<Func(InType)>::type
 	}
 
 private:
-	InputRange<InType> &m_source;
+	Source m_source;
 	Func& m_func;
 };

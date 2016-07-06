@@ -1,22 +1,13 @@
 #pragma once
 
-template <typename T>
-struct ConcatEnumerable : InputRange<T>
+template <typename T, typename Source, typename OtherSource>
+struct ConcatEnumerable : InputRange<T, ConcatEnumerable<T, Source, OtherSource>>
 {
-	ConcatEnumerable(InputRange<T> &source1, InputRange<T> &source2)
+	ConcatEnumerable(Source &source1, OtherSource &source2)
 		: m_source1(source1)
 		, m_source2(source2)
 		, m_firstDone(false)
 	{}
-
-	virtual void restart() override
-	{
-		m_source1.restart();
-		if (m_firstDone)
-		{
-			m_source2.restart();
-		}
-	}
 
 	virtual bool empty() override
 	{
@@ -47,7 +38,7 @@ struct ConcatEnumerable : InputRange<T>
 	}
 
 private:
-	InputRange<T> &m_source1;
-	InputRange<T> &m_source2;
+	Source m_source1;
+	OtherSource m_source2;
 	bool m_firstDone;
 };

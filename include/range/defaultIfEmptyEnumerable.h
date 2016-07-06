@@ -1,21 +1,14 @@
 #pragma once
 
 
-template <typename T>
-struct DefaultIfEmptyEnumerable : InputRange<T>
+template <typename T, typename Source>
+struct DefaultIfEmptyEnumerable : InputRange<T, DefaultIfEmptyEnumerable<T, Source>>
 {
-	DefaultIfEmptyEnumerable(InputRange<T> &source)
+	DefaultIfEmptyEnumerable(Source &source)
 		: m_source(source)
 		, m_wasEmpty(source.empty())
 		, m_iterated(false)
 	{}
-
-	virtual void restart() override
-	{
-		m_source.restart();
-		m_wasEmpty = m_source.empty();
-		m_iterated = false;
-	}
 
 	virtual bool empty() override
 	{
@@ -47,7 +40,7 @@ struct DefaultIfEmptyEnumerable : InputRange<T>
 	}
 
 private:
-	InputRange<T> &m_source;
+	Source m_source;
 	bool m_wasEmpty;
 	bool m_iterated;
 };

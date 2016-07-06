@@ -2,52 +2,51 @@
 
 #include <set>
 
-template <typename T>
-struct InputRange;
-
-template<typename InType, typename Func>
+template<typename InType, typename Func, typename Source>
 struct SelectEnumerable;
 
-template<typename InType, typename OutType>
+template<typename InType, typename OutType, typename Source>
 struct DynamicCastEnumerable;
-template<typename InType, typename OutType>
+template<typename InType, typename OutType, typename Source>
 struct StaticCastEnumerable;
-template<typename InType, typename OutType>
+template<typename InType, typename OutType, typename Source>
 struct ReinterpretCastEnumerable;
-template<typename InType, typename OutType>
+template<typename InType, typename OutType, typename Source>
 struct ConstCastEnumerable;
 
-template<typename T>
+template<typename T, typename Derived, typename OtherDerived>
 struct ConcatEnumerable;
 
-template<typename T>
+template<typename T, typename Source>
 struct DefaultIfEmptyEnumerable;
 
-template<typename T, typename TT>
+template<typename T, typename TT, typename Source>
 struct ValueIfEmptyEnumerable;
 
-template<typename T, typename SetType>
+template<typename T, typename SetType, typename Source>
 struct DistinctEnumerable;
 
-template<typename T>
+template<typename T, typename Derived>
 struct InputRange
 {
-	virtual void restart() = 0;
-
 	virtual bool empty() = 0;
 	virtual T front() = 0;
 	virtual void popFront() = 0;
 
-	template <typename Func>
-	SelectEnumerable<T, Func> select(Func &&t)
+	Derived save()
 	{
-		return SelectEnumerable<T, Func>(*this, std::forward<Func>(t));
+		return Derived(*static_cast<Derived*>(this));
+	}
+
+	template <typename Func>
+	SelectEnumerable<T, Func, Derived> select(Func &&t)
+	{
+		return SelectEnumerable<T, Func, Derived>(*static_cast<Derived*>(this), std::forward<Func>(t));
 	}
 
 	template <typename Func>
 	void forEach(Func &&func)
 	{
-		restart();
 		while (!empty())
 		{
 			func(front());
@@ -58,7 +57,6 @@ struct InputRange
 	template <typename Func>
 	bool all(Func&& func)
 	{
-		restart();
 		bool ret = true;
 		while (!empty())
 		{
@@ -71,7 +69,6 @@ struct InputRange
 	template <typename Func>
 	bool any(Func&& func)
 	{
-		restart();
 		while (!empty())
 		{
 			if (func(front()))
@@ -84,29 +81,30 @@ struct InputRange
 	}
 
 	template <typename OutType>
-	DynamicCastEnumerable<T, OutType> dynamicCast()
+	DynamicCastEnumerable<T, OutType, Derived> dynamicCast()
 	{
-		return DynamicCastEnumerable<T, OutType>(*this);
+		return DynamicCastEnumerable<T, OutType>(*static_cast<Derived*>(this));
 	}
 	template <typename OutType>
-	StaticCastEnumerable<T, OutType> staticCast()
+	StaticCastEnumerable<T, OutType, Derived> staticCast()
 	{
-		return StaticCastEnumerable<T, OutType>(*this);
+		return StaticCastEnumerable<T, OutType, Derived>(*static_cast<Derived*>(this));
 	}
 	template <typename OutType>
-	ReinterpretCastEnumerable<T, OutType> reinterpretCast()
+	ReinterpretCastEnumerable<T, OutType, Derived> reinterpretCast()
 	{
-		return ReinterpretCastEnumerable<T, OutType>(*this);
+		return ReinterpretCastEnumerable<T, OutType, Derived>(*static_cast<Derived*>(this));
 	}
 	template <typename OutType>
-	ConstCastEnumerable<T, OutType> constCast()
+	ConstCastEnumerable<T, OutType, Derived> constCast()
 	{
-		return ConstCastEnumerable<T, OutType>(*this);
+		return ConstCastEnumerable<T, OutType, Derived>(*static_cast<Derived*>(this));
 	}
 
-	ConcatEnumerable<T> concat(InputRange<T>&& other)
+	template <typename OtherSource>
+	ConcatEnumerable<T, Derived, OtherSource> concat(OtherSource&& other)
 	{
-		return ConcatEnumerable<T>(*this, other);
+		return ConcatEnumerable<T, Derived, OtherSource>(*static_cast<Derived*>(this), other);
 	}
 
 	bool contains(T&& value)
@@ -148,21 +146,21 @@ struct InputRange
 		return count;
 	}
 
-	DefaultIfEmptyEnumerable<T> defaultIfEmpty()
+	DefaultIfEmptyEnumerable<T, Derived> defaultIfEmpty()
 	{
-		return DefaultIfEmptyEnumerable<T>(*this);
+		return DefaultIfEmptyEnumerable<T, Derived>(*static_cast<Derived*>(this));
 	}
 
 	template <typename TT>
-	ValueIfEmptyEnumerable<T, TT> valueIfEmpty(TT&& value)
+	ValueIfEmptyEnumerable<T, TT, Derived> valueIfEmpty(TT&& value)
 	{
-		return ValueIfEmptyEnumerable<T, TT>(*this, std::forward<TT>(value));
+		return ValueIfEmptyEnumerable<T, TT, Derived>(*static_cast<Derived*>(this), std::forward<TT>(value));
 	}
 
 	template <typename SetType = std::set<T> >
-	DistinctEnumerable<T, SetType> distinct()
+	DistinctEnumerable<T, SetType, Derived> distinct()
 	{
-		return DistinctEnumerable<T, SetType>(*this);
+		return DistinctEnumerable<T, SetType, Derived>(*static_cast<Derived*>(this));
 	}
 };
 

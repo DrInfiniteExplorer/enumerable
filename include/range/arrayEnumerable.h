@@ -1,18 +1,13 @@
 #pragma once
 
 template<typename T>
-struct ArrayEnumerable : public InputRange<T>
+struct ArrayEnumerable : public InputRange<T, ArrayEnumerable<T>>
 {
 	ArrayEnumerable(T t[], size_t size)
 		: m_t(t)
 		, m_size(size)
 		, m_index(0)
 	{}
-
-	virtual void restart() override
-	{
-		m_index = 0;
-	}
 
 	virtual bool empty() override
 	{
