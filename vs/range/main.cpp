@@ -1,11 +1,10 @@
-#include <Windows.h>
 #include <stdio.h>
-#include <type_traits>
 
 #include <range/range.h>
 #include <range/inputRangeIterator.h>
 #include <vector>
 #include <list>
+#include <set>
 
 void printInt(int i)
 {
@@ -127,7 +126,67 @@ int main(int argc, char* argv[])
 	printf(" Distinct: ");
 	Enumerable(vector).distinct().forEach(printInt);
 	printf("\n");
-	
-	return 0;
 
+	vector = { 1, 2, 3 };
+	Enumerable(vector).forEach(printInt);
+	printf(" ElementAt(2): %d", Enumerable(vector).elementAt(2));
+	printf("\n");
+
+	vector = { 1, 2, 3 };
+	Enumerable(vector).forEach(printInt);
+	printf(" ElementAtOrDefault(2): %d", Enumerable(vector).elementAtOrDefault(2));
+	printf("\n");
+
+	vector = { 1, 2, 3 };
+	Enumerable(vector).forEach(printInt);
+	printf(" ElementAtOrDefault(5): %d", Enumerable(vector).elementAtOrDefault(5));
+	printf("\n");
+
+	vector = { 1, 2, 3 };
+	Enumerable(vector).forEach(printInt);
+	printf(" ElementAtOrValue(2, 5): %d", Enumerable(vector).elementAtOrValue(2, 5));
+	printf("\n");
+
+	vector = { 1, 2, 3 };
+	Enumerable(vector).forEach(printInt);
+	printf(" ElementAtOrValue(5, 5): %d", Enumerable(vector).elementAtOrValue(5, 5));
+	printf("\n");
+
+	vector = { 1, 2, 3 };
+	Enumerable(array).forEach(printInt); printf(" | ");
+	Enumerable(vector).forEach(printInt);
+	printf(" A except B: "); Enumerable(array).except(Enumerable(vector)).forEach(printInt);
+	printf("\n");
+
+	vector = { 1, 2, 3 };
+	Enumerable(vector).forEach(printInt);
+	printf("first: %d\n", Enumerable(vector).first());
+
+	vector = { 1, 2, 3 };
+	Enumerable(vector).forEach(printInt);
+	printf("first>2: %d\n", Enumerable(vector).first([](auto x) { return x > 2; }));
+
+	vector = {2, 3};
+	Enumerable(vector).forEach(printInt);
+	printf("firstOrDefault: %d\n", Enumerable(vector).firstOrDefault());
+
+	vector = {};
+	Enumerable(vector).forEach(printInt);
+	printf("firstOrDefault: %d\n", Enumerable(vector).firstOrDefault());
+
+	vector = { 1, 5 };
+	Enumerable(vector).forEach(printInt);
+	printf("firstOrDefault(>2): %d\n", Enumerable(vector).firstOrDefault([](auto x) { return x > 2; }));
+
+	vector = { };
+	Enumerable(vector).forEach(printInt);
+	printf("firstOrDefault(>2): %d\n", Enumerable(vector).firstOrDefault([](auto x) { return x > 2; }));
+
+	vector = { 1, 2, 3, 4, 5, 6, 7 };
+	Enumerable(vector).forEach(printInt);
+	printf(" where mod2=0: "); Enumerable(vector).where([](auto x) { return (x % 2) == 0; }).forEach(printInt);
+	printf("\n");
+
+
+	return 0;
 }

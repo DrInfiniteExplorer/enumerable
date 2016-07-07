@@ -1,5 +1,7 @@
 #pragma once
 
+#include <type_traits>
+
 template <typename InType, typename Func, typename Source>
 struct SelectEnumerable : InputRange<
 	typename std::result_of<Func(InType)>::type,
@@ -29,5 +31,5 @@ struct SelectEnumerable : InputRange<
 
 private:
 	Source m_source;
-	Func& m_func;
+	Func m_func;
 };

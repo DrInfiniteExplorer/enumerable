@@ -3,6 +3,7 @@
 #include <range/inputRange.h>
 #include <range/arrayEnumerable.h>
 #include <range/dynamicCastEnumerable.h>
+#include <range/exceptEnumerable.h>
 #include <range/staticCastEnumerable.h>
 #include <range/reinterpretCastEnumerable.h>
 #include <range/constCastEnumerable.h>
@@ -12,4 +13,5 @@
 #include <range/distinctEnumerable.h>
 #include <range/selectEnumerable.h>
 #include <range/valueIfEmptyEnumerable.h>
+#include <range/whereEnumerable.h>
 
