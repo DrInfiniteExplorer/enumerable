@@ -6,41 +6,37 @@ struct ValueIfEmptyEnumerable : InputRange<T, ValueIfEmptyEnumerable<T, TT, Sour
 	ValueIfEmptyEnumerable(Source &source, TT&& value)
 		: m_source(source)
 		, m_value(value)
-		, m_wasEmpty(source.empty())
-		, m_iterated(false)
+		, m_wasEmpty(false)
+		, m_firstMoved(false)
 	{}
 
-	virtual bool empty() override
-	{
-		if (m_wasEmpty)
-		{
-			return m_iterated;
-		}
-		return m_source.empty();
-	}
-
-	virtual T front() override
+	virtual T value() override
 	{
 		if (m_wasEmpty)
 		{
 			return m_value;
 		}
-		return m_source.front();
+		return m_source.value();
 	}
 
-	virtual void popFront() override
+	virtual bool moveNext() override
 	{
-		if (m_wasEmpty)
+		if (m_firstMoved && m_wasEmpty)
 		{
-			m_iterated = true;
-			return;
+			return false;
 		}
-		m_source.popFront();
+		if (!m_firstMoved)
+		{
+			m_wasEmpty = !m_source.moveNext();
+			m_firstMoved = true;
+			return true;
+		}
+		return m_source.moveNext();
 	}
 
 private:
 	Source m_source;
 	TT m_value;
 	bool m_wasEmpty;
-	bool m_iterated;
+	bool m_firstMoved;
 };

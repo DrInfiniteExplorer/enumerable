@@ -7,15 +7,19 @@ struct InputRangeIterator
 		: m_e(e)
 		, m_end(end)
 	{
+		if (!m_end)
+		{
+			++(*this);
+		}
 	}
 	T operator*() const
 	{
-		return m_e.front();
+		return m_e.value();
 	}
 	bool operator==(const InputRangeIterator &other) const
 	{
 		if (&m_e != &other.m_e) return false;
-		if (other.m_end && m_e.empty()) return true;
+		if (other.m_end && m_end) return true;
 		return false;
 	}
 
@@ -27,7 +31,7 @@ struct InputRangeIterator
 
 	void operator++()
 	{
-		m_e.popFront();
+		m_end = !m_e.moveNext();
 	}
 
 private:

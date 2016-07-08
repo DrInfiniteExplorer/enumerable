@@ -153,13 +153,17 @@
     <ClInclude Include="..\..\..\include\range\containerEnumerable.h" />
     <ClInclude Include="..\..\..\include\range\defaultIfEmptyEnumerable.h" />
     <ClInclude Include="..\..\..\include\range\distinctEnumerable.h" />
+    <ClInclude Include="..\..\..\include\range\exceptEnumerable.h" />
     <ClInclude Include="..\..\..\include\range\inputRange.h" />
     <ClInclude Include="..\..\..\include\range\inputRangeIterator.h" />
+    <ClInclude Include="..\..\..\include\range\intersectEnumerable.h" />
+    <ClInclude Include="..\..\..\include\range\joinEnumerable.h" />
     <ClInclude Include="..\..\..\include\range\range.h" />
     <ClInclude Include="..\..\..\include\range\reinterpretCastEnumerable.h" />
     <ClInclude Include="..\..\..\include\range\selectEnumerable.h" />
     <ClInclude Include="..\..\..\include\range\staticCastEnumerable.h" />
     <ClInclude Include="..\..\..\include\range\valueIfEmptyEnumerable.h" />
+    <ClInclude Include="..\..\..\include\range\whereEnumerable.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\main.cpp" />

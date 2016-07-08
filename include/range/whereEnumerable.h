@@ -9,29 +9,23 @@ struct WhereEnumerable : InputRange<T, WhereEnumerable < T, Func, Source >>
 		: m_source(source)
 		, m_func(func)
 	{
-		while (!m_source.empty() && !m_func(m_source.front()))
+	}
+
+	virtual T value() override
+	{
+		return m_source.value();
+	}
+
+	virtual bool moveNext() override
+	{
+		while (m_source.moveNext())
 		{
-			m_source.popFront();
+			if (m_func(m_source.value()))
+			{
+				return true;
+			}
 		}
-	}
-
-	virtual bool empty() override
-	{
-		return m_source.empty();
-	}
-
-	virtual T front() override
-	{
-		return m_source.front();
-	}
-
-	virtual void popFront() override
-	{
-		m_source.popFront();
-		while (!m_source.empty() && !m_func(m_source.front()))
-		{
-			m_source.popFront();
-		}
+		return false;
 	}
 
 private:

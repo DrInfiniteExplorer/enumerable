@@ -1,9 +1,9 @@
 #pragma once
 
 template <typename T, typename SetType, typename Source, typename OtherSource>
-struct ExceptEnumerable : InputRange<T, ExceptEnumerable<T, SetType, Source, OtherSource>>
+struct IntersectEnumerable : InputRange<T, IntersectEnumerable<T, SetType, Source, OtherSource>>
 {
-	ExceptEnumerable(Source &source, OtherSource&& otherSource)
+	IntersectEnumerable(Source &source, OtherSource&& otherSource)
 		: m_source(source)
 	{
 		OtherSource other = otherSource;
@@ -22,7 +22,7 @@ struct ExceptEnumerable : InputRange<T, ExceptEnumerable<T, SetType, Source, Oth
 	{
 		while (m_source.moveNext())
 		{
-			if (m_set.find(m_source.value()) == m_set.end())
+			if (m_set.find(m_source.value()) != m_set.end())
 			{
 				return true;
 			}

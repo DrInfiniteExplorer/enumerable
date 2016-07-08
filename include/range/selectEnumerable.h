@@ -14,19 +14,15 @@ struct SelectEnumerable : InputRange<
 		, m_func(func)
 	{}
 
-	virtual bool empty() override
+
+	virtual RetType value() override
 	{
-		return m_source.empty();
+		return m_func(m_source.value());
 	}
 
-	virtual RetType front() override
+	virtual bool moveNext() override
 	{
-		return m_func(m_source.front());
-	}
-
-	virtual void popFront() override
-	{
-		m_source.popFront();
+		return m_source.moveNext();
 	}
 
 private:

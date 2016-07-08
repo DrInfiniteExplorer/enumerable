@@ -29,17 +29,29 @@ struct DistinctEnumerable;
 template<typename T, typename SetType, typename Source, typename OtherSource>
 struct ExceptEnumerable;
 
+template<typename T, typename SetType, typename Source, typename OtherSource>
+struct IntersectEnumerable;
+
+template <typename Source, typename OtherSource, typename Key1Func, typename Key2Func, typename SelectFunc>
+struct JoinEnumerable;
+
+
 template <typename T, typename Func, typename Source>
 struct WhereEnumerable;
+
+template <class IR>
+struct ValueType
+{
+	typedef decltype(std::declval<IR>().value()) type;
+};
 
 template<typename T, typename Derived>
 struct InputRange
 {
 	typedef InputRange<T, Derived> InputRangeType;
 
-	virtual bool empty() = 0;
-	virtual T front() = 0;
-	virtual void popFront() = 0;
+	virtual bool moveNext() = 0;
+	virtual T value() = 0;
 
 	Derived save()
 	{
@@ -55,10 +67,9 @@ struct InputRange
 	template <typename Func>
 	void forEach(Func &&func)
 	{
-		while (!empty())
+		while (moveNext())
 		{
-			func(front());
-			popFront();
+			func(value());
 		}
 	}
 
@@ -66,10 +77,9 @@ struct InputRange
 	bool all(Func&& func)
 	{
 		bool ret = true;
-		while (!empty())
+		while (moveNext())
 		{
-			ret &= func(front());
-			popFront();
+			ret &= func(value());
 		}
 		return ret;
 	}
@@ -77,13 +87,12 @@ struct InputRange
 	template <typename Func>
 	bool any(Func&& func)
 	{
-		while (!empty())
+		while (moveNext())
 		{
-			if (func(front()))
+			if (func(value()))
 			{
 				return true;
 			}
-			popFront();
 		}
 		return false;
 	}
@@ -115,15 +124,14 @@ struct InputRange
 		return ConcatEnumerable<T, Derived, OtherSource>(*static_cast<Derived*>(this), other);
 	}
 
-	bool contains(T&& value)
+	bool contains(T&& _value)
 	{
-		while (!empty())
+		while (moveNext())
 		{
-			if (front() == value)
+			if (value() == _value)
 			{
 				return true;
 			}
-			popFront();
 		}
 		return false;
 	}
@@ -131,10 +139,9 @@ struct InputRange
 	size_t count()
 	{
 		size_t count = 0;
-		while (!empty())
+		while (moveNext())
 		{
 			++count;
-			popFront();
 		}
 		return count;
 	}
@@ -143,13 +150,12 @@ struct InputRange
 	size_t count(Func&& func)
 	{
 		size_t count = 0;
-		while (!empty())
+		while (moveNext())
 		{
-			if (func(front()))
+			if (func(value()))
 			{
 				++count;
 			}
-			popFront();
 		}
 		return count;
 	}
@@ -175,14 +181,10 @@ struct InputRange
 	{
 		Derived rangeCopy = *static_cast<Derived*>(this);
 
-		while (!rangeCopy.empty() && index)
+		while (rangeCopy.moveNext())
 		{
-			rangeCopy.popFront();
+			if (!index) return rangeCopy.value();
 			index--;
-		}
-		if (!rangeCopy.empty())
-		{
-			return rangeCopy.front();
 		}
 		throw std::out_of_range("out_of_range error in elementAt");
 	}
@@ -191,14 +193,10 @@ struct InputRange
 	{
 		Derived rangeCopy = *static_cast<Derived*>(this);
 
-		while (!rangeCopy.empty() && index)
+		while (rangeCopy.moveNext())
 		{
-			rangeCopy.popFront();
+			if (!index) return rangeCopy.value();
 			index--;
-		}
-		if (!rangeCopy.empty())
-		{
-			return rangeCopy.front();
 		}
 		return T();
 	}
@@ -208,14 +206,10 @@ struct InputRange
 	{
 		Derived rangeCopy = *static_cast<Derived*>(this);
 
-		while (!rangeCopy.empty() && index)
+		while (rangeCopy.moveNext())
 		{
-			rangeCopy.popFront();
+			if (!index) return rangeCopy.value();
 			index--;
-		}
-		if (!rangeCopy.empty())
-		{
-			return rangeCopy.front();
 		}
 		return t;
 	}
@@ -231,20 +225,22 @@ struct InputRange
 
 	T first()
 	{
-		if (empty())
+		Derived rangeCopy = *static_cast<Derived*>(this);
+		if (!rangeCopy.moveNext())
 		{
 			throw std::out_of_range("empty source in first");
 		}
-		return front();
+		return rangeCopy.value();
 	}
 
 	T firstOrDefault()
 	{
-		if (empty())
+		Derived rangeCopy = *static_cast<Derived*>(this);
+		if (!rangeCopy.moveNext())
 		{
 			return T();
 		}
-		return front();
+		return rangeCopy.value();
 	}
 
 	template <typename Func>
@@ -258,6 +254,30 @@ struct InputRange
 		return where(std::forward<Func>(func)).firstOrDefault();
 	}
 
+	template <typename SetType = std::set<T>, typename OtherSource>
+	IntersectEnumerable<T, SetType, Derived, OtherSource> intersect(OtherSource&& otherSource)
+	{
+		return IntersectEnumerable<T, SetType, Derived, OtherSource>(
+			*static_cast<Derived*>(this),
+			std::forward<OtherSource>(otherSource));
+	}
+
+	template <typename OtherSource, typename Key1Func, typename Key2Func, typename SelectFunc>
+	JoinEnumerable <Derived, OtherSource, Key1Func, Key2Func, SelectFunc> join(
+		OtherSource&& otherSource,
+		Key1Func&& key1Func,
+		Key2Func&& key2Func,
+		SelectFunc&& selectFunc
+		)
+	{
+		return JoinEnumerable <Derived, OtherSource, Key1Func, Key2Func, SelectFunc>(
+			*static_cast<Derived*>(this),
+			std::forward<OtherSource>(otherSource),
+			std::forward<Key1Func>(key1Func),
+			std::forward<Key2Func>(key2Func),
+			std::forward<SelectFunc>(selectFunc)
+			);
+	}
 
 	template <typename Func>
 	WhereEnumerable<T, Func, Derived> where(Func&& func)

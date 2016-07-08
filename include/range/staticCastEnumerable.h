@@ -7,19 +7,14 @@ struct StaticCastEnumerable : InputRange<OutType, StaticCastEnumerable<InType, O
 		: m_source(source)
 	{}
 
-	virtual bool empty() override
+	virtual OutType value() override
 	{
-		return m_source.empty();
+		return static_cast<OutType>(m_source.value());
 	}
 
-	virtual OutType front() override
+	virtual bool moveNext() override
 	{
-		return static_cast<OutType>(m_source.front());
-	}
-
-	virtual void popFront() override
-	{
-		m_source.popFront();
+		return m_source.moveNext();
 	}
 
 private:

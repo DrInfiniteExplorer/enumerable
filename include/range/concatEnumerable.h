@@ -9,32 +9,27 @@ struct ConcatEnumerable : InputRange<T, ConcatEnumerable<T, Source, OtherSource>
 		, m_firstDone(false)
 	{}
 
-	virtual bool empty() override
-	{
-		return m_source1.empty() && m_firstDone && m_source2.empty();
-	}
-
-	virtual T front() override
+	virtual T value() override
 	{
 		if (m_firstDone)
 		{
-			return m_source2.front();
+			return m_source2.value();
 		}
-		return m_source1.front();
+		return m_source1.value();
 	}
 
-	virtual void popFront() override
+	virtual bool moveNext() override
 	{
-		if (m_firstDone)
+		if (!m_firstDone)
 		{
-			m_source2.popFront();
-			return;
+			m_firstDone = !m_source1.moveNext();
+			if (m_firstDone)
+			{
+				return m_source2.moveNext();
+			}
+			return true;
 		}
-		m_source1.popFront();
-		if (m_source1.empty())
-		{
-			m_firstDone = true;
-		}
+		return m_source2.moveNext();
 	}
 
 private:

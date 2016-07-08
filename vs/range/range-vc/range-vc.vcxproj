@@ -156,6 +156,8 @@
     <ClInclude Include="..\..\..\include\range\exceptEnumerable.h" />
     <ClInclude Include="..\..\..\include\range\inputRange.h" />
     <ClInclude Include="..\..\..\include\range\inputRangeIterator.h" />
+    <ClInclude Include="..\..\..\include\range\intersectEnumerable.h" />
+    <ClInclude Include="..\..\..\include\range\joinEnumerable.h" />
     <ClInclude Include="..\..\..\include\range\range.h" />
     <ClInclude Include="..\..\..\include\range\reinterpretCastEnumerable.h" />
     <ClInclude Include="..\..\..\include\range\selectEnumerable.h" />

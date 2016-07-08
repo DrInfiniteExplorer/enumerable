@@ -7,26 +7,22 @@ struct DistinctEnumerable : InputRange<T, DistinctEnumerable<T, SetType, Source>
 		: m_source(source)
 	{}
 
-	virtual bool empty() override
+	virtual T value() override
 	{
-		return m_source.empty();
+		return m_source.value();
 	}
 
-	virtual T front() override
+	virtual bool moveNext() override
 	{
-		return m_source.front();
-	}
-
-	virtual void popFront() override
-	{
-		m_source.popFront();
-		if (m_source.empty()) return;
-		while (m_set.find(m_source.front()) != m_set.end())
+		while (m_source.moveNext())
 		{
-			m_source.popFront();
-			if (m_source.empty()) return;
+			if (m_set.find(m_source.value()) == m_set.end())
+			{
+				m_set.insert(m_source.value());
+				return true;
+			}
 		}
-		m_set.insert(m_source.front());
+		return false;
 	}
 
 private:

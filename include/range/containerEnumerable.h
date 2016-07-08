@@ -5,27 +5,37 @@ struct ContainerEnumerable : public InputRange<T, ContainerEnumerable<T, Contain
 {
 	ContainerEnumerable(Container&& container)
 		: m_container(container)
-		, m_iterator(container.begin())
+		, m_iterator()
+		, m_firstMoved(false)
 	{}
 
-	virtual bool empty() override
+	virtual T value() override
 	{
-		return m_iterator == m_container.end();
-	}
-
-	virtual T front()
-	{
+		if (!m_firstMoved)
+		{
+			throw std::runtime_error("ContainerEnumerable not moveNext'ed");
+		}
 		return *m_iterator;
 	}
 
-	virtual void popFront()
+	virtual bool moveNext() override
 	{
-		++m_iterator;
+		if (m_firstMoved)
+		{
+			++m_iterator;
+		}
+		else
+		{
+			m_iterator = m_container.begin();
+			m_firstMoved = true;
+		}
+		return m_iterator != m_container.end();
 	}
 
 private:
 	Container& m_container;
 	typename Container::iterator m_iterator;
+	bool m_firstMoved;
 };
 
 template <typename T, template <typename, typename> class Container, typename ContainerAllocator>
