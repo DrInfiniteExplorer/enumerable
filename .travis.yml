@@ -1,0 +1,13 @@
+language: cpp
+compiler:
+- clang
+- gcc
+
+before_install:
+- echo $LANG
+- echo $LC_ALL
+
+script:
+- mkdir build
+- cd build
+- cmake .. && cmake --build . && ctest ..
