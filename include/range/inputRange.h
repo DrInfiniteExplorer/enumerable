@@ -2,7 +2,7 @@
 
 #include <set>
 
-template<typename InType, typename Func, typename Source>
+template<typename InType, typename TransformFunc, typename Source>
 struct SelectEnumerable;
 
 template<typename InType, typename OutType, typename Source>
@@ -32,64 +32,71 @@ struct ExceptEnumerable;
 template<typename T, typename SetType, typename Source, typename OtherSource>
 struct IntersectEnumerable;
 
-template <typename Source, typename OtherSource, typename Key1Func, typename Key2Func, typename SelectFunc>
+template <typename Source, typename OtherSource, typename Key1Func, typename Key2Func, typename JoinFunc>
 struct JoinEnumerable;
 
-
-template <typename T, typename Func, typename Source>
+template <typename T, typename PredicateFunc, typename Source>
 struct WhereEnumerable;
 
-template <class IR>
+template <typename ZipFunc, typename... Sources>
+struct ZipEnumerable;
+
+// Used to deduct enumeration type of an Enumerable
+template <class Enumerable>
 struct ValueType
 {
-	typedef decltype(std::declval<IR>().value()) type;
+	typedef decltype(std::declval<Enumerable>().value()) type;
+};
+
+template <typename T>
+struct IEnumerable
+{
+	virtual bool moveNext() = 0;
+	virtual T value() = 0;
 };
 
 template<typename T, typename Derived>
-struct InputRange
+struct InputRange : virtual public IEnumerable<T>
 {
 	typedef InputRange<T, Derived> InputRangeType;
-
-	virtual bool moveNext() = 0;
-	virtual T value() = 0;
 
 	Derived save()
 	{
 		return Derived(*static_cast<Derived*>(this));
 	}
 
-	template <typename Func>
-	SelectEnumerable<T, Func, Derived> select(Func &&t)
+	template <typename TransformFunc>
+	SelectEnumerable<T, TransformFunc, Derived> select(TransformFunc &&transformFunc)
 	{
-		return SelectEnumerable<T, Func, Derived>(*static_cast<Derived*>(this), std::forward<Func>(t));
+		return SelectEnumerable<T, TransformFunc, Derived>(*static_cast<Derived*>(this), std::forward<TransformFunc>(transformFunc));
 	}
 
-	template <typename Func>
-	void forEach(Func &&func)
+	template <typename SinkFunc>
+	void forEach(SinkFunc &&sinkFunction)
 	{
-		while (moveNext())
+		while (this->moveNext())
 		{
-			func(value());
+			sinkFunction(this->value());
 		}
 	}
 
-	template <typename Func>
-	bool all(Func&& func)
+	template <typename PredicateFunc>
+	bool all(PredicateFunc&& predicateFunction)
 	{
 		bool ret = true;
-		while (moveNext())
+		while (this->moveNext())
 		{
-			ret &= func(value());
+			ret &= predicateFunction(this->value());
 		}
 		return ret;
 	}
 
-	template <typename Func>
-	bool any(Func&& func)
+	template <typename PredicateFunc>
+	bool any(PredicateFunc&& predicateFunction)
 	{
-		while (moveNext())
+		while (this->moveNext())
 		{
-			if (func(value()))
+			if (predicateFunction(this->value()))
 			{
 				return true;
 			}
@@ -100,7 +107,7 @@ struct InputRange
 	template <typename OutType>
 	DynamicCastEnumerable<T, OutType, Derived> dynamicCast()
 	{
-		return DynamicCastEnumerable<T, OutType>(*static_cast<Derived*>(this));
+		return DynamicCastEnumerable<T, OutType, Derived>(*static_cast<Derived*>(this));
 	}
 	template <typename OutType>
 	StaticCastEnumerable<T, OutType, Derived> staticCast()
@@ -126,9 +133,9 @@ struct InputRange
 
 	bool contains(T&& _value)
 	{
-		while (moveNext())
+		while (this->moveNext())
 		{
-			if (value() == _value)
+			if (this->value() == _value)
 			{
 				return true;
 			}
@@ -139,20 +146,20 @@ struct InputRange
 	size_t count()
 	{
 		size_t count = 0;
-		while (moveNext())
+		while (this->moveNext())
 		{
 			++count;
 		}
 		return count;
 	}
 
-	template <typename Func>
-	size_t count(Func&& func)
+	template <typename PredicateFunc>
+	size_t count(PredicateFunc&& predicateFunction)
 	{
 		size_t count = 0;
-		while (moveNext())
+		while (this->moveNext())
 		{
-			if (func(value()))
+			if (predicateFunction(this->value()))
 			{
 				++count;
 			}
@@ -243,15 +250,15 @@ struct InputRange
 		return rangeCopy.value();
 	}
 
-	template <typename Func>
-	T first(Func&& func)
+	template <typename PredicateFunc>
+	T first(PredicateFunc&& predicateFunction)
 	{
-		return where(std::forward<Func>(func)).first();
+		return where(std::forward<PredicateFunc>(predicateFunction)).first();
 	}
-	template <typename Func>
-	T firstOrDefault(Func&& func)
+	template <typename PredicateFunc>
+	T firstOrDefault(PredicateFunc&& predicateFunction)
 	{
-		return where(std::forward<Func>(func)).firstOrDefault();
+		return where(std::forward<PredicateFunc>(predicateFunction)).firstOrDefault();
 	}
 
 	template <typename SetType = std::set<T>, typename OtherSource>
@@ -262,29 +269,191 @@ struct InputRange
 			std::forward<OtherSource>(otherSource));
 	}
 
-	template <typename OtherSource, typename Key1Func, typename Key2Func, typename SelectFunc>
-	JoinEnumerable <Derived, OtherSource, Key1Func, Key2Func, SelectFunc> join(
+	template <typename OtherSource, typename Key1Func, typename Key2Func, typename JoinFunc>
+	JoinEnumerable <Derived, OtherSource, Key1Func, Key2Func, JoinFunc> join(
 		OtherSource&& otherSource,
 		Key1Func&& key1Func,
 		Key2Func&& key2Func,
-		SelectFunc&& selectFunc
+		JoinFunc&& joinFunc
 		)
 	{
-		return JoinEnumerable <Derived, OtherSource, Key1Func, Key2Func, SelectFunc>(
+		return JoinEnumerable <Derived, OtherSource, Key1Func, Key2Func, JoinFunc>(
 			*static_cast<Derived*>(this),
 			std::forward<OtherSource>(otherSource),
 			std::forward<Key1Func>(key1Func),
 			std::forward<Key2Func>(key2Func),
-			std::forward<SelectFunc>(selectFunc)
+			std::forward<JoinFunc>(joinFunc)
 			);
 	}
 
-	template <typename Func>
-	WhereEnumerable<T, Func, Derived> where(Func&& func)
+	template <typename PredicateFunc>
+	WhereEnumerable<T, PredicateFunc, Derived> where(PredicateFunc&& predicateFunc)
 	{
-		return WhereEnumerable<T, Func, Derived>(
+		return WhereEnumerable<T, PredicateFunc, Derived>(
 			*static_cast<Derived*>(this),
-			std::forward<Func>(func));
+			std::forward<PredicateFunc>(predicateFunc));
+	}
+
+	T last()
+	{
+		Derived rangeCopy = *static_cast<Derived*>(this);
+		if (!rangeCopy.moveNext())
+		{
+			throw std::runtime_error("Empty enumerator, cant .last()");
+		}
+		auto t = rangeCopy.value();
+		while (rangeCopy.moveNext())
+		{
+			t = rangeCopy.value();
+
+		}
+		return t;
+	}
+
+	template <typename PredicateFunc>
+	T last(PredicateFunc&& predicateFunc)
+	{
+		Derived rangeCopy = *static_cast<Derived*>(this);
+		bool initialized = false;
+		auto t = T();
+		while (rangeCopy.moveNext())
+		{
+			if (predicateFunc(rangeCopy.value()))
+			{
+				t = rangeCopy.value();
+				initialized = true;
+			}
+		}
+		if (!initialized)
+		{
+			throw std::runtime_error("Empty enumerator, cant .last(filter)");
+		}
+		return t;
+	}
+
+	T lastOrDefault()
+	{
+		Derived rangeCopy = *static_cast<Derived*>(this);
+		auto t = T();
+		while (rangeCopy.moveNext())
+		{
+			t = rangeCopy.value();
+
+		}
+		return t;
+	}
+
+	template <typename PredicateFunc>
+	T lastOrDefault(PredicateFunc&& predicateFunc)
+	{
+		Derived rangeCopy = *static_cast<Derived*>(this);
+		auto t = T();
+		while (rangeCopy.moveNext())
+		{
+			if (predicateFunc(rangeCopy.value()))
+			{
+				t = rangeCopy.value();
+			}
+		}
+		return t;
+	}
+
+	T max()
+	{
+		Derived rangeCopy = *static_cast<Derived*>(this);
+		if (!rangeCopy.moveNext())
+		{
+			throw std::runtime_error("Cant get max of empty enumeration");
+		}
+
+		auto t = rangeCopy.value();
+		while (rangeCopy.moveNext())
+		{
+			if (rangeCopy.value() > t)
+			{
+				t = rangeCopy.value();
+			}
+		}
+		return t;
+	}
+
+	template <typename TransformFunc>
+	typename std::result_of< TransformFunc(T)>::type
+		max(TransformFunc&& func)	
+	{
+		Derived rangeCopy = *static_cast<Derived*>(this);
+		if (!rangeCopy.moveNext())
+		{
+			throw std::runtime_error("Cant get max of empty enumeration");
+		}
+
+		auto t = func(rangeCopy.value());
+		while (rangeCopy.moveNext())
+		{
+			auto v = func(rangeCopy.value());
+			if (v > t)
+			{
+				t = v;
+			}
+		}
+		return t;
+	}
+
+	T min()
+	{
+		Derived rangeCopy = *static_cast<Derived*>(this);
+		if (!rangeCopy.moveNext())
+		{
+			throw std::runtime_error("Cant get max of empty enumeration");
+		}
+
+		auto t = rangeCopy.value();
+		while (rangeCopy.moveNext())
+		{
+			if (rangeCopy.value() < t)
+			{
+				t = rangeCopy.value();
+			}
+		}
+		return t;
+	}
+
+	template <typename TransformFunc>
+	typename std::result_of< TransformFunc(T)>::type
+		min(TransformFunc&& func)
+	{
+		Derived rangeCopy = *static_cast<Derived*>(this);
+		if (!rangeCopy.moveNext())
+		{
+			throw std::runtime_error("Cant get max of empty enumeration");
+		}
+
+		auto t = func(rangeCopy.value());
+		while (rangeCopy.moveNext())
+		{
+			auto v = func(rangeCopy.value());
+			if (v < t)
+			{
+				t = v;
+			}
+		}
+		return t;
+	}
+
+	template <typename OutType>
+	auto ofType()
+	{
+		return dynamicCast<OutType>().where([](auto ptr) { return nullptr != ptr; });
+	}
+
+	template <typename ZipFunc, typename ... Sources >
+	ZipEnumerable<ZipFunc, Derived, Sources...> zip(ZipFunc&& zipFunc, Sources&&... sources)
+	{
+		return ZipEnumerable<ZipFunc, Derived, Sources...>(
+			std::forward<zipFunc>(zipFunc), 
+			*static_cast<Derived*>(this), 
+			std::forward<Sources...>(sources)
+		);
 	}
 
 };

@@ -7,24 +7,14 @@ struct DynamicCastEnumerable : InputRange<OutType, DynamicCastEnumerable<InType,
 		: m_source(source)
 	{}
 
-	virtual void restart() override
+	virtual bool moveNext() override
 	{
-		m_source.restart();
+		return m_source.moveNext();
 	}
 
-	virtual bool empty() override
+	virtual OutType value() override
 	{
-		return m_source.empty();
-	}
-
-	virtual OutType front() override
-	{
-		return dynamic_cast<OutType>(m_source.front());
-	}
-
-	virtual void popFront() override
-	{
-		m_source.popFront();
+		return dynamic_cast<OutType>(m_source.value());
 	}
 
 private:

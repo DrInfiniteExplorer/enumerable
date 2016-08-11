@@ -6,8 +6,8 @@ template <typename S1, typename S2, typename K1F, typename K2F, typename SF, typ
 struct JoinEnumerableHelper;
 
 template <typename S1, typename S2, typename K1F, typename K2F, typename SF>
-struct JoinEnumerable : JoinEnumerableHelper<S1, S2, K1F, K2F, SF,
-	JoinEnumerable<S1, S2, K1F, K2F, SF>>::type
+struct JoinEnumerable : JoinEnumerableHelper < S1, S2, K1F, K2F, SF,
+	JoinEnumerable < S1, S2, K1F, K2F, SF >> ::type
 {
 	JoinEnumerable(S1 &source, S2&& otherSource,
 	K1F&& key1, K2F&& key2, SF&& select)
@@ -26,9 +26,9 @@ struct JoinEnumerableHelper
 	typedef typename ValueType<S1>::type T1;
 	typedef typename ValueType<S2>::type T2;
 
-	typedef typename std::result_of< K1F(T1)>::type K1;
-	typedef typename std::result_of< K2F(T2)>::type K2;
-	typedef typename std::result_of< SF(T1, T2)>::type SFT;
+	typedef typename std::result_of< K1F(T1&)>::type K1;
+	typedef typename std::result_of< K2F(T2&)>::type K2;
+	typedef typename std::result_of< SF(T1&, T2&)>::type SFT;
 
 	struct type : InputRange<SFT, Derived>
 	{
@@ -57,7 +57,10 @@ struct JoinEnumerableHelper
 			if (m_setIterator != m_setEndIterator)
 			{
 				++m_setIterator;
-				return true;
+				if (m_setIterator != m_setEndIterator)
+				{
+					return true;
+				}
 			}
 			while (m_source.moveNext())
 			{

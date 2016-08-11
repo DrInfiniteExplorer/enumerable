@@ -3,19 +3,30 @@
 template <typename T, typename Source>
 struct InputRangeIterator
 {
-	InputRangeIterator(InputRange<T, Source> &e, bool end)
+	static_assert(std::is_base_of<InputRange<T, Source>, Source>::value, "Must inherit rom InputRange");
+	typedef T value_type;
+
+	InputRangeIterator(Source &e, bool end)
 		: m_e(e)
 		, m_end(end)
+		, m_firstMoved(false)
 	{
-		if (!m_end)
+	}
+	T operator*()
+	{
+		if (!m_end && !m_firstMoved)
 		{
 			++(*this);
+			m_firstMoved = true;
 		}
+		return m_e.value();
 	}
-	T operator*() const
+
+	T operator->()
 	{
 		return m_e.value();
 	}
+
 	bool operator==(const InputRangeIterator &other) const
 	{
 		if (&m_e != &other.m_e) return false;
@@ -29,23 +40,27 @@ struct InputRangeIterator
 	}
 
 
-	void operator++()
+	InputRangeIterator& operator++()
 	{
 		m_end = !m_e.moveNext();
+		return *this;
 	}
 
 private:
-	InputRange<T, Source> &m_e;
+	Source& m_e;
 	bool m_end;
+	bool m_firstMoved;
 };
 
-template <typename T, typename Source>
-InputRangeIterator<T, Source> begin(InputRange<T, Source> &a)
+template <typename T, typename Derived>
+InputRangeIterator<T, Derived> begin(InputRange<T, Derived> &a)
 {
-	return InputRangeIterator<T, Source>(a, false);
+	Derived& derived = static_cast<Derived&>(a);
+	return InputRangeIterator<T, Derived>(std::forward<Derived>(derived), false);
 }
-template <typename T, typename Source>
-InputRangeIterator<T, Source> end(InputRange<T, Source> &a)
+template <typename T, typename Derived>
+InputRangeIterator<T, Derived> end(InputRange<T, Derived> &a)
 {
-	return InputRangeIterator<T, Source>(a, true);
+	Derived& derived = static_cast<Derived&>(a);
+	return InputRangeIterator<T, Derived>(std::forward<Derived>(derived), true);
 }

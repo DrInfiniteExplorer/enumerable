@@ -23,20 +23,8 @@ struct DerivedFloat : Base { float f; DerivedFloat(int a, float b) : Base{ a }, 
 struct DerivedChar : Base { char c; DerivedChar(int a, char b) : Base{ a }, c(b) {} };
 struct DerivedDouble : Base { double d; DerivedDouble(int a, double b) : Base{ a }, d(b) {} };
 
-#include <Windows.h>
-
 int main(int argc, char* argv[])
 {
-	HDC dc = GetDC(0);
-	for (auto x = 0; x < 1023; x++)
-	{
-		for (auto y = 0; y < 1024; y++)
-		{
-			auto color = x * y;
-			SetPixel(dc, x, y, color);
-		}
-	}
-
 	int array[7] = { 0,1,2,3,4,5,6 };
 	std::vector<int> vector = { 0,1,2,3,4,5,6 };
 
@@ -53,7 +41,7 @@ int main(int argc, char* argv[])
 	{
 		printf("%f ", v);
 	}
-	printf("\n");
+		printf("\n");
 
 	for (auto v : Enum.select([](auto a) {
 		struct { int q; double b; } e;
@@ -266,19 +254,19 @@ int main(int argc, char* argv[])
 
 	vector = { 1, 5, 2, 9, 4, -2 };
 	Enumerable(vector).forEach(printInt);
-	//printf("max(): %d\n", Enumerable(vector).max());
+	printf("max(): %d\n", Enumerable(vector).max());
 
 	vector = { 1, 5, 2, 9, 4, -2 };
 	Enumerable(vector).forEach(printInt);
-	//printf("max(x*-1.5f): %f\n", Enumerable(vector).max([](auto x) { return x * -1.5f; }));
+	printf("max(x*-1.5f): %f\n", Enumerable(vector).max([](auto x) { return x * -1.5f; }));
 
 	vector = { 1, 5, 2, 9, 4, -2 };
 	Enumerable(vector).forEach(printInt);
-	//printf("min(): %d\n", Enumerable(vector).min());
+	printf("min(): %d\n", Enumerable(vector).min());
 
 	vector = { 1, 5, 2, 9, 4, -2 };
 	Enumerable(vector).forEach(printInt);
-	//printf("min(x*-1.5f): %f\n", Enumerable(vector).min([](auto x) { return x * -1.5f; }));
+	printf("min(x*-1.5f): %f\n", Enumerable(vector).min([](auto x) { return x * -1.5f; }));
 
 	Base* classPtrArray[] = {
 		new Base{1},
