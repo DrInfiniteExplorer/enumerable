@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/DrInfiniteExplorer/enumerable.svg?branch=master)](https://travis-ci.org/DrInfiniteExplorer/enumerable)
+
 # enumerable
 Enumerable is a library inspired by IEnumerable in c#
 
