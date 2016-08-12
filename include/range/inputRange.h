@@ -2,6 +2,7 @@
 
 #include <set>
 #include <exception>
+#include <stdexcept>
 #include <utility>
 
 template<typename InType, typename TransformFunc, typename Source>
@@ -454,7 +455,7 @@ struct InputRange : virtual public IEnumerable<T>
 		return ZipEnumerable<ZipFunc, Derived, Sources...>(
 			std::forward<zipFunc>(zipFunc), 
 			*static_cast<Derived*>(this), 
-			std::forward<Sources...>(sources)
+			std::forward<Sources...>(sources...)
 		);
 	}
 
