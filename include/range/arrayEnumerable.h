@@ -1,5 +1,8 @@
 #pragma once
 
+#include <exception>
+#include <stdexcept>
+
 template <typename, typename>
 struct InputRange;
 

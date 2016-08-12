@@ -56,11 +56,26 @@ template <typename T, typename Derived>
 InputRangeIterator<T, Derived> begin(InputRange<T, Derived> &a)
 {
 	Derived& derived = static_cast<Derived&>(a);
-	return InputRangeIterator<T, Derived>(std::forward<Derived>(derived), false);
+	return InputRangeIterator<T, Derived>(derived, false);
 }
+
+template <typename T, typename Derived>
+InputRangeIterator<T, Derived> begin(InputRange<T, Derived> &&a)
+{
+	Derived&& derived = static_cast<Derived&&>(a);
+	return InputRangeIterator<T, Derived>(derived, false);
+}
+
+
 template <typename T, typename Derived>
 InputRangeIterator<T, Derived> end(InputRange<T, Derived> &a)
 {
 	Derived& derived = static_cast<Derived&>(a);
-	return InputRangeIterator<T, Derived>(std::forward<Derived>(derived), true);
+	return InputRangeIterator<T, Derived>(derived, true);
+}
+template <typename T, typename Derived>
+InputRangeIterator<T, Derived> end(InputRange<T, Derived> &&a)
+{
+	Derived&& derived = static_cast<Derived&&>(a);
+	return InputRangeIterator<T, Derived>(derived, true);
 }

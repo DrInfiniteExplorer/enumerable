@@ -52,11 +52,12 @@ int main(int argc, char* argv[])
 	}
 	printf("\n");
 
-	Enum.select([](auto a) {
-		struct { int q; double b; } e;
-		return e = { a, a * 2.2 };
-	}).forEach([](auto v) { printf("%d %f  ", v.q, v.b); });
-	printf("\n");
+	// GCC cant handle this. Tsk tsk tsk.
+	//Enum.select([](auto a) {
+	//	struct { int q; double b; } e;
+	//	return e = { a, a * 2.2 };
+	//}).forEach([](auto v) { printf("%d %f  ", v.q, v.b); });
+	//printf("\n");
 
 	vector = { 7,8,9,10,11,12 };
 	Enumerable(array).forEach(printInt); printf(" & ");
