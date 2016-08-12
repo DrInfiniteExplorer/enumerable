@@ -1,6 +1,8 @@
 #pragma once
 
 #include <set>
+#include <exception>
+#include <utility>
 
 template<typename InType, typename TransformFunc, typename Source>
 struct SelectEnumerable;
