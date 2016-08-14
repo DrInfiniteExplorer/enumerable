@@ -2,10 +2,13 @@
 
 #include <utility>
 
+// This class wraps a normal container, providing a sequence object implementing EnumerableBase.
+// The container is captured by reference, so sequences with this as the base can be
+//  copied and reused multiple times without problem as long as the source container is valid.
 template <typename T, typename Container>
-struct ContainerEnumerable : public InputRange<T, ContainerEnumerable<T, Container>>
+struct ContainerEnumerable : public EnumerableBase<T, ContainerEnumerable<T, Container>>
 {
-	ContainerEnumerable(Container&& container)
+	ContainerEnumerable(Container& container)
 		: m_container(container)
 		, m_iterator()
 		, m_firstMoved(false)
@@ -40,8 +43,11 @@ private:
 	bool m_firstMoved;
 };
 
+// Creates a sequence object given a source container.
+// Works with simple containers like std::vector, std::list, etc.
+// Basically anything that implements ::iterator, .begin() and .end()
 template <typename T, template <typename, typename> class Container, typename ContainerAllocator>
 ContainerEnumerable<T, Container<T, ContainerAllocator>> Enumerable(Container<T, ContainerAllocator>& container)
 {
-	return ContainerEnumerable<T, Container<T, ContainerAllocator>>(std::forward<Container<T, ContainerAllocator>>(container));
+	return ContainerEnumerable<T, Container<T, ContainerAllocator>>(container);
 }

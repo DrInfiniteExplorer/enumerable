@@ -1,7 +1,7 @@
 #pragma once
 
 template <typename T, typename SetType, typename Source, typename OtherSource>
-struct ExceptEnumerable : InputRange<T, ExceptEnumerable<T, SetType, Source, OtherSource>>
+struct ExceptEnumerable : EnumerableBase<T, ExceptEnumerable<T, SetType, Source, OtherSource>>
 {
 	ExceptEnumerable(Source &source, OtherSource&& otherSource)
 		: m_source(source)

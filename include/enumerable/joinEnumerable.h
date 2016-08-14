@@ -30,7 +30,7 @@ struct JoinEnumerableHelper
 	typedef typename std::result_of< K2F(T2&)>::type K2;
 	typedef typename std::result_of< SF(T1&, T2&)>::type SFT;
 
-	struct type : InputRange<SFT, Derived>
+	struct type : EnumerableBase<SFT, Derived>
 	{
 		type(S1 &source, S2&& otherSource,
 			K1F&& key1, K2F&& key2, SF&& select)

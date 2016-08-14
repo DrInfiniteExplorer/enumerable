@@ -1,11 +1,11 @@
 #pragma once
 
-
-template <typename T, typename Source>
-struct DefaultIfEmptyEnumerable : InputRange<T, DefaultIfEmptyEnumerable<T, Source>>
+template <typename T, typename TT, typename Source>
+struct ValueIfEmptyEnumerable : EnumerableBase<T, ValueIfEmptyEnumerable<T, TT, Source>>
 {
-	DefaultIfEmptyEnumerable(Source &source)
+	ValueIfEmptyEnumerable(Source &source, TT&& value)
 		: m_source(source)
+		, m_value(value)
 		, m_wasEmpty(false)
 		, m_firstMoved(false)
 	{}
@@ -14,7 +14,7 @@ struct DefaultIfEmptyEnumerable : InputRange<T, DefaultIfEmptyEnumerable<T, Sour
 	{
 		if (m_wasEmpty)
 		{
-			return T();
+			return m_value;
 		}
 		return m_source.value();
 	}
@@ -36,7 +36,7 @@ struct DefaultIfEmptyEnumerable : InputRange<T, DefaultIfEmptyEnumerable<T, Sour
 
 private:
 	Source m_source;
+	TT m_value;
 	bool m_wasEmpty;
 	bool m_firstMoved;
 };
-

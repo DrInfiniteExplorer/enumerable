@@ -4,10 +4,13 @@
 #include <stdexcept>
 
 template <typename, typename>
-struct InputRange;
+struct EnumerableBase;
 
+// This class wraps a normal array, providing a sequence object implementing EnumerableBase.
+// The array is captured by pointer/reference, so sequences with this as the base can be
+//  copied and reused multiple times without problem as long as the source array is valid.
 template<typename T>
-struct ArrayEnumerable : public InputRange<T, ArrayEnumerable<T>>
+struct ArrayEnumerable : public EnumerableBase<T, ArrayEnumerable<T>>
 {
 	ArrayEnumerable(T t[], size_t size)
 		: m_t(t)
@@ -46,8 +49,16 @@ private:
 	bool m_firstMoved;
 };
 
+// Create a sequence object given a fix-sized array
 template<typename T, int size>
 ArrayEnumerable<T> Enumerable(T(&t)[size])
+{
+	return ArrayEnumerable<T>(t, size);
+}
+
+// Create a sequence object given a pointer and a size
+template<typename T>
+ArrayEnumerable<T> Enumerable(T *t, size_t size)
 {
 	return ArrayEnumerable<T>(t, size);
 }

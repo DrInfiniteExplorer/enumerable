@@ -1,7 +1,9 @@
 #pragma once
 
+// A sequence object created with two other sequence objects A {a1, a2, ...} and B {b1, b2, ...}.
+// The sequence objects represents the sequence formed by {A, B} = {a1, a2, ..., b1, b2, ...}
 template <typename T, typename Source, typename OtherSource>
-struct ConcatEnumerable : InputRange<T, ConcatEnumerable<T, Source, OtherSource>>
+struct ConcatEnumerable : EnumerableBase<T, ConcatEnumerable<T, Source, OtherSource>>
 {
 	ConcatEnumerable(Source &source1, OtherSource &source2)
 		: m_source1(source1)

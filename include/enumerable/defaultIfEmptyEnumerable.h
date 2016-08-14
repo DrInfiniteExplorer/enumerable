@@ -1,11 +1,12 @@
 #pragma once
 
-template <typename T, typename TT, typename Source>
-struct ValueIfEmptyEnumerable : InputRange<T, ValueIfEmptyEnumerable<T, TT, Source>>
+// If the source sequence is not empty, this sequence object simply forwards that sequence.
+// However, if the source sequence is empty, this object will contain a single default-initialized element.
+template <typename T, typename Source>
+struct DefaultIfEmptyEnumerable : EnumerableBase<T, DefaultIfEmptyEnumerable<T, Source>>
 {
-	ValueIfEmptyEnumerable(Source &source, TT&& value)
+	DefaultIfEmptyEnumerable(Source &source)
 		: m_source(source)
-		, m_value(value)
 		, m_wasEmpty(false)
 		, m_firstMoved(false)
 	{}
@@ -14,7 +15,7 @@ struct ValueIfEmptyEnumerable : InputRange<T, ValueIfEmptyEnumerable<T, TT, Sour
 	{
 		if (m_wasEmpty)
 		{
-			return m_value;
+			return T();
 		}
 		return m_source.value();
 	}
@@ -36,7 +37,7 @@ struct ValueIfEmptyEnumerable : InputRange<T, ValueIfEmptyEnumerable<T, TT, Sour
 
 private:
 	Source m_source;
-	TT m_value;
 	bool m_wasEmpty;
 	bool m_firstMoved;
 };
+

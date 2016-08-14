@@ -3,7 +3,7 @@
 #include <type_traits>
 
 template <typename T, typename Func, typename Source>
-struct WhereEnumerable : InputRange<T, WhereEnumerable < T, Func, Source >>
+struct WhereEnumerable : EnumerableBase<T, WhereEnumerable < T, Func, Source >>
 {
 	WhereEnumerable(Source &source, Func &&func)
 		: m_source(source)

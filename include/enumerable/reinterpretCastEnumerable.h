@@ -1,7 +1,7 @@
 #pragma once
 
 template <typename InType, typename OutType, typename Source>
-struct ReinterpretCastEnumerable : InputRange<OutType, ReinterpretCastEnumerable<InType, OutType, Source>>
+struct ReinterpretCastEnumerable : EnumerableBase<OutType, ReinterpretCastEnumerable<InType, OutType, Source>>
 {
 	ReinterpretCastEnumerable(Source source)
 		: m_source(source)

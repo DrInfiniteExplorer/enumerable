@@ -1,7 +1,8 @@
 #pragma once
 
+// This sequence object will never yield elements of the same value twice.
 template <typename T, typename SetType, typename Source>
-struct DistinctEnumerable : InputRange<T, DistinctEnumerable<T, SetType, Source>>
+struct DistinctEnumerable : EnumerableBase<T, DistinctEnumerable<T, SetType, Source>>
 {
 	DistinctEnumerable(Source &source)
 		: m_source(source)

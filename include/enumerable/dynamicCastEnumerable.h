@@ -1,7 +1,8 @@
 #pragma once
 
+// A sequence object that performs a const-cast of elements in a source sequence.
 template <typename InType, typename OutType, typename Source>
-struct DynamicCastEnumerable : InputRange<OutType, DynamicCastEnumerable<InType, OutType, Source> >
+struct DynamicCastEnumerable : EnumerableBase<OutType, DynamicCastEnumerable<InType, OutType, Source> >
 {
 	DynamicCastEnumerable(Source &source)
 		: m_source(source)

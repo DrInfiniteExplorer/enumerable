@@ -1,7 +1,7 @@
 #pragma once
 
 template <typename T, typename SetType, typename Source, typename OtherSource>
-struct IntersectEnumerable : InputRange<T, IntersectEnumerable<T, SetType, Source, OtherSource>>
+struct IntersectEnumerable : EnumerableBase<T, IntersectEnumerable<T, SetType, Source, OtherSource>>
 {
 	IntersectEnumerable(Source &source, OtherSource&& otherSource)
 		: m_source(source)

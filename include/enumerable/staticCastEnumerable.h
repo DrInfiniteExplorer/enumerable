@@ -1,7 +1,7 @@
 #pragma once
 
 template <typename InType, typename OutType, typename Source>
-struct StaticCastEnumerable : InputRange<OutType, StaticCastEnumerable<InType, OutType, Source>>
+struct StaticCastEnumerable : EnumerableBase<OutType, StaticCastEnumerable<InType, OutType, Source>>
 {
 	StaticCastEnumerable(Source &source)
 		: m_source(source)

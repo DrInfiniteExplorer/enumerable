@@ -3,7 +3,7 @@
 #include <type_traits>
 
 template <typename InType, typename Func, typename Source>
-struct SelectEnumerable : InputRange<
+struct SelectEnumerable : EnumerableBase<
 	typename std::result_of<Func(InType)>::type,
 	SelectEnumerable < InType, Func, Source >
 >
