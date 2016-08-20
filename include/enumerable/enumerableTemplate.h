@@ -54,6 +54,9 @@ struct WhereEnumerable;
 template <typename ZipFunc, typename... Sources>
 struct ZipEnumerable;
 
+template <typename T>
+struct HeapEnumerable;
+
 // Used to deduce enumeration type of an Enumerable
 template <class Enumerable>
 struct ValueType
@@ -156,7 +159,22 @@ struct EnumerableBase : virtual public IEnumerable<T>
 	{
 		return ReinterpretCastEnumerable<T, OutType, Derived>(*static_cast<Derived*>(this));
 	}
-	
+
+	HeapEnumerable<T> makeHeapEnumerable()
+	{
+		const auto&& copier = [](const HeapEnumerable<T> &enumerable)
+		{
+			Derived* asDerived = dynamic_cast<Derived*>(enumerable.m_source);
+			return asDerived->makeHeapEnumerable();
+		};
+
+		return HeapEnumerable<T>([this]() {
+			const Derived* asDerived = dynamic_cast<const Derived*>(this);
+			return new Derived(*asDerived);
+		}, copier);
+	}
+
+
 	// constCast<OutType> returns a sequence of OutType
 	template <typename OutType>
 	ConstCastEnumerable<T, OutType, Derived> constCast()
@@ -545,6 +563,41 @@ struct EnumerableBase : virtual public IEnumerable<T>
 			std::forward<Sources...>(sources...)
 		);
 	}
+	
+	// toContainer for explicit containers. 
+	template <typename Container>
+	Container toContainer()
+	{
+		Container ret;
+		while (this->moveNext())
+		{
+			ret.insert(ret.end(), this->value());
+		}
+		return ret;		
+	}
+	
+	template <template <typename, typename> class Container, typename Allocator = std::allocator<T>>
+	Container<T, Allocator> toContainer()
+	{
+		Container<T, Allocator> ret;
+		while (this->moveNext())
+		{
+			ret.insert(ret.end(), this->value());
+		}
+		return ret;		
+	}
 
+	template <template <typename, typename, typename> class Container, typename Compare = std::less<T>, typename Allocator = std::allocator<T>>
+	Container<T, Compare, Allocator> toContainer()
+	{
+		Container<T, Compare, Allocator> ret;
+		while (this->moveNext())
+		{
+			ret.insert(ret.end(), this->value());
+		}
+		return ret;		
+	}
+	
+	
 };
 

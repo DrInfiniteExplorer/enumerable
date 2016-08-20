@@ -14,8 +14,14 @@ function(expect TEST_NAME OUTPUT)
 	)	
 endfunction()
 
+add_named_test("heap.enumerable" test_heap_enumerable.cpp)
+expect("heap.enumerable" "\n0 1 2 3 4 5 6 \n")
+expect("heap.enumerable" "\n0.000000 1.000000 2.000000 3.000000 4.000000 5.000000 6.000000 \n")
+ 
 add_named_test("iterator.foreach" test_iterator_foreach.cpp)
 expect("iterator.foreach" "^0 1 2 3 4 5 6 \n$")
+
+add_named_test("tocontainer" test_tocontainer.cpp)
 
 add_named_test("foreach.lambda" test_foreach_lambda.cpp)
 expect("foreach.lambda" "^N 1 2 3 \n")

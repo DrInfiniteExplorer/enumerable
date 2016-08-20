@@ -37,7 +37,8 @@ int main(int argc, char* argv[])
 	}
 	printf("\n");
 
-	for (auto v : Enum.select([](auto a) { return a * 2.2; }))
+	auto selected = Enum.select([](int a) { return a * 2.2; });
+	for (auto v : selected)
 	{
 		printf("%f ", v);
 	}

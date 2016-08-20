@@ -51,3 +51,9 @@ ContainerEnumerable<T, Container<T, ContainerAllocator>> Enumerable(Container<T,
 {
 	return ContainerEnumerable<T, Container<T, ContainerAllocator>>(container);
 }
+
+template <typename T, template <typename, typename, typename> class Container, typename ContainerCompare, typename ContainerAllocator>
+ContainerEnumerable<T, Container<T, ContainerCompare, ContainerAllocator>> Enumerable(Container<T, ContainerCompare, ContainerAllocator>& container)
+{
+	return ContainerEnumerable<T, Container<T, ContainerCompare, ContainerAllocator>>(container);
+}

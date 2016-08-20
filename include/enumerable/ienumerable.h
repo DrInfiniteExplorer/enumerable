@@ -9,6 +9,7 @@
 template <typename T>
 struct IEnumerable
 {
+	virtual ~IEnumerable() {};
 	virtual bool moveNext() = 0;
 	virtual T value() = 0;
 };
