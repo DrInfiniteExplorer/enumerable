@@ -168,10 +168,8 @@ struct EnumerableBase : virtual public IEnumerable<T>
 			return asDerived->makeHeapEnumerable();
 		};
 
-		return HeapEnumerable<T>([this]() {
-			const Derived* asDerived = dynamic_cast<const Derived*>(this);
-			return new Derived(*asDerived);
-		}, copier);
+		const Derived* asDerived = dynamic_cast<const Derived*>(this);
+		return HeapEnumerable<T>(new Derived(*asDerived), copier);
 	}
 
 

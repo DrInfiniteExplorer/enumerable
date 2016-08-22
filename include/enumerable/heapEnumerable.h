@@ -6,13 +6,11 @@ template <typename T>
 struct HeapEnumerable : public EnumerableBase<T, HeapEnumerable<T>>
 {
 	typedef std::function<HeapEnumerable<T>(const HeapEnumerable<T>&)> CopyFunctionType;
-	typedef std::function<IEnumerable<T>*()> AllocateFunctionType;
 
-	HeapEnumerable(const AllocateFunctionType& alloc, const CopyFunctionType& copy)
-	: m_source(nullptr)
+	HeapEnumerable(IEnumerable<T> *source, const CopyFunctionType& copy)
+	: m_source(source)
+	, m_copier(copy)
 	{
-		m_source = alloc();
-		m_copier = copy;
 	}
 
 	HeapEnumerable()
