@@ -6,7 +6,7 @@ if(WIN32)
 	set(gtest_disable_pthreads ON)
 endif()
 
-set(gtest_force_shared_crt ON)
+set(gtest_force_shared_crt ON CACHE BOOL "Force google test to behave")
 
 string(FIND ${CMAKE_SRC_ROOT} "http" pos1)
 if(${pos1} GREATER "-1")
@@ -28,9 +28,10 @@ if(${pos1} GREATER "-1")
 		endif()
 	endif()
 	add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/gtest ${CMAKE_CURRENT_BINARY_DIR}/gtest_build)
-	
+	include_directories(${CMAKE_CURRENT_BINARY_DIR}/gtest/googletest/include)
 else()
 	add_subdirectory(${CMAKE_SRC_ROOT})
+	include_directories(${CMAKE_SRC_ROOT}/googletest/include)
 endif()
 
 include_directories(../include)
