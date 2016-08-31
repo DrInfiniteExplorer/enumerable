@@ -14,22 +14,25 @@ struct EnumerableBaseIterator
 	EnumerableBaseIterator(Source &e, bool end)
 		: m_e(e)
 		, m_end(end)
-		, m_firstMoved(false)
 	{
+		if(!end)
+		{
+			m_end = !m_e.moveNext();
+		}
 	}
+		
 	T operator*()
 	{
-		if (!m_end && !m_firstMoved)
+		if(m_end)
 		{
-			++(*this);
-			m_firstMoved = true;
+			throw std::runtime_error("Trying to dereference iterator at end");
 		}
 		return m_e.value();
 	}
 
 	T operator->()
 	{
-		return m_e.value();
+		return **this;
 	}
 
 	bool operator==(const EnumerableBaseIterator &other) const
@@ -44,7 +47,6 @@ struct EnumerableBaseIterator
 		return !(*this == other);
 	}
 
-
 	EnumerableBaseIterator& operator++()
 	{
 		m_end = !m_e.moveNext();
@@ -54,7 +56,6 @@ struct EnumerableBaseIterator
 private:
 	Source& m_e;
 	bool m_end;
-	bool m_firstMoved;
 };
 
 template <typename T, typename Derived>

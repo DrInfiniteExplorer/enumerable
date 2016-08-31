@@ -551,6 +551,18 @@ struct EnumerableBase : virtual public IEnumerable<T>
 	{
 		return dynamicCast<OutType>().where([](auto ptr) { return nullptr != ptr; });
 	}
+	
+	template <typename Source>
+	bool sequenceEqual(Source&& other)
+	{
+		bool a,b;
+		while( a=this->moveNext(), b=other.moveNext(), a&&b)
+		{
+			if(this->value() != other.value()) return false;
+		}
+		
+		return a == b;
+	}
 
 	template <typename ZipFunc, typename ... Sources >
 	ZipEnumerable<ZipFunc, Derived, Sources...> zip(ZipFunc&& zipFunc, Sources&&... sources)

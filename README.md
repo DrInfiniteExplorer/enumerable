@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/DrInfiniteExplorer/enumerable.svg?branch=master)](https://travis-ci.org/DrInfiniteExplorer/enumerable)
 
 # enumerable
-Enumerable is a library inspired by IEnumerable in c#
+Enumerable is a library inspired by [IEnumerable](https://msdn.microsoft.com/en-us/library/9eekhta0(v=vs.110).aspx) in c#
 
 It supplies a CRTP-template which implements various functions like .all() or .select.
 It expects that what inherits from it implements a moveNext() and value() function.

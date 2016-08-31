@@ -30,7 +30,7 @@ struct ArrayEnumerable : public EnumerableBase<T, ArrayEnumerable<T>>
 
 	virtual bool moveNext() override
 	{
-		if (m_index == m_size)
+		if (m_firstMoved && m_index >= m_size)
 		{
 			throw std::out_of_range("Tried to moveNext after end in ArrayEnumerable");
 		}

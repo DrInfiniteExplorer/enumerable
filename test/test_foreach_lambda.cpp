@@ -1,5 +1,7 @@
 #include <stdio.h>
 
+#include <gtest/gtest.h>
+
 #include <enumerable/enumerable.h>
 #include <enumerable/inputIterator.h>
 #include <vector>
@@ -8,48 +10,68 @@
 
 #include <typeinfo>
 
-int main(int argc, char* argv[])
+TEST(ForEach, NormalLambda)
 {
 	int array[3] = { 1,2,3 };
+	int sum = 0;
+	Enumerable(array).forEach([&](auto x) { sum += x; });
+	EXPECT_EQ(6, sum);
+}
+TEST(ForEach, RefArgLambda)
+{
+	int array[3] = { 1,2,3 };
+	int sum = 0;
+	Enumerable(array).forEach([&](auto x) { sum += x; });
+	EXPECT_EQ(6, sum);
+}
 
-	printf("N ");
-	Enumerable(array).forEach([](auto x) { printf("%d ", x); });
-	printf("\n");
+TEST(ForEach, ConstArgLambda)
+{
+	int array[3] = { 1,2,3 };
+	int sum = 0;
+	Enumerable(array).forEach([&](const auto x) { sum += x; });
+	EXPECT_EQ(6, sum);
+}
 
-	printf("RR ");
-	Enumerable(array).forEach([](auto&& x) { printf("%d ", x); });
-	printf("\n");
+TEST(ForEach, ConstRefArgLambda)
+{
+	int array[3] = { 1,2,3 };
+	int sum = 0;
+	Enumerable(array).forEach([&](const auto& x) { sum += x; });
+	EXPECT_EQ(6, sum);
+}
 
-	printf("C ");
-	Enumerable(array).forEach([](const auto x) { printf("%d ", x); });
-	printf("\n");
+TEST(ForEach, StoredNormalLambda)
+{
+	int array[3] = { 1,2,3 };
+	int sum = 0;
+	auto lambda = [&](auto x) { sum += x; };
+	Enumerable(array).forEach(lambda);
+	EXPECT_EQ(6, sum);
+}
+TEST(ForEach, StoredRefArgLambda)
+{
+	int array[3] = { 1,2,3 };
+	int sum = 0;
+	auto lambda = [&](auto x) { sum += x; };
+	Enumerable(array).forEach(lambda);
+	EXPECT_EQ(6, sum);
+}
 
-	printf("CR ");
-	Enumerable(array).forEach([](const auto& x) { printf("%d ", x); });
-	printf("\n");
+TEST(ForEach, StoredConstArgLambda)
+{
+	int array[3] = { 1,2,3 };
+	int sum = 0;
+	auto lambda = [&](const auto x) { sum += x; };
+	Enumerable(array).forEach(lambda);
+	EXPECT_EQ(6, sum);
+}
 
-	printf("LN ");
-	auto lambda1 = [](auto x) { printf("%d ", x); };
-	Enumerable(array).forEach(lambda1);
-	printf("\n");
-
-	printf("LRR ");
-	auto lambda2 = [](auto&& x) { printf("%d ", x); };
-	Enumerable(array).forEach(lambda2);
-	printf("\n");
-
-	printf("LC ");
-	auto lambda3 = [](const auto x) { printf("%d ", x); };
-	Enumerable(array).forEach(lambda2);
-	printf("\n");
-
-	printf("LCR ");
-	auto lambda4 = [](const auto& x) { printf("%d ", x); };
-	Enumerable(array).forEach(lambda4);
-	printf("\n");
-
-	const auto lambda5 = [](const auto& x) { printf("%d ", x); };
-	Enumerable(array).forEach(lambda4);
-
-	return 0;
+TEST(ForEach, StoredConstRefArgLambda)
+{
+	int array[3] = { 1,2,3 };
+	int sum = 0;
+	auto lambda = [&](const auto& x) { sum += x; };
+	Enumerable(array).forEach(lambda);
+	EXPECT_EQ(6, sum);
 }

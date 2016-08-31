@@ -8,17 +8,53 @@
 
 #include <typeinfo>
 
-void printInt(int i)
+#include <gtest/gtest.h>
+
+TEST(Iterator, RangedForEmpty)
 {
-	printf("%d ", i);
+	int array[1] = { 0 };
+	int sum=0;
+	for(auto v : Enumerable(array, 0))
+	{
+		sum += v;
+	}
+	EXPECT_EQ(0, sum);
 }
 
-void printFloat(float f)
+TEST(Iterator, RangedForSum)
 {
-	printf("%f ", f);
+	int array[3] = { 1,2,3 };
+	int sum=0;
+	for(auto v : Enumerable(array))
+	{
+		sum += v;
+	}
+	EXPECT_EQ(6, sum);
 }
 
-int main(int argc, char* argv[])
+
+TEST(Iterator, BeginNeqBegin)
+{
+	int array[2] = { 1,2 };
+	auto Enum = Enumerable(array);
+	EXPECT_NE(begin(Enum), begin(Enum));
+}
+
+TEST(Iterator, BeginNeqBegin2)
+{
+	int array[2] = { 1,2 };
+	EXPECT_NE(begin(Enumerable(array)), begin(Enumerable(array)));
+}
+
+TEST(Iterator, BeginIsntEnd)
+{
+	int array[2] = { 1,2 };
+	auto Enum = Enumerable(array);
+	EXPECT_NE(begin(Enum), end(Enum));
+}
+	
+
+int amain(int argc, char* argv[])
 {
 	int array[7] = { 0,1,2,3,4,5,6 };
 	std::vector<int> vector = { 0,1,2,3,4,5,6 };
