@@ -14,7 +14,6 @@ if(${pos1} GREATER "-1")
 	if(NOT IS_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/gtest)
 		message("Will clone from git url")
 		execute_process(COMMAND git clone ${CMAKE_SRC_ROOT} ${CMAKE_CURRENT_BINARY_DIR}/gtest --depth=1)
-		execute_process(COMMAND echo asd)
 
 		include(CheckCXXSourceCompiles)
 		unset(IS_BAD_MINGW CACHE)

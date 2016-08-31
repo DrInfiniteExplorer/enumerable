@@ -103,11 +103,11 @@ int main(int argc, char* argv[])
 
 	vector = { 1, 2, 3 };
 	Enumerable(vector).forEach(printInt);
-	printf(" count: %d\n", Enumerable(vector).count());
+	printf(" count: %d\n", (int)Enumerable(vector).count());
 
 	vector = { 1, 2, 3 };
 	Enumerable(vector).forEach(printInt);
-	printf(" count(>=2): %d\n", Enumerable(vector).count([](auto x) { return x >= 2; }));
+	printf(" count(>=2): %d\n", (int)Enumerable(vector).count([](auto x) { return x >= 2; }));
 
 	vector = { 1, 2, 3 };
 	printf(" DefaultIfEmpty(1,2,3): "); 	Enumerable(vector).defaultIfEmpty().forEach(printInt);
