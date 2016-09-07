@@ -127,7 +127,7 @@ The list of methods is split into two groups. The first group transforms a seque
 In the following descriptions, `this` refers to the sequence which operations are applied to. (ex `this.defaultIfEmpty()`)
 
 Method | Description
---- | ---
+------ | -----------
 **Basic transforms** | ---
 `select(transform)` | A sequence where _transform_ is applied to every element. Can change the element type of the sequence.
 `where(predicate)` | Filters the sequence, keeping elements that pass `predicate`
@@ -146,7 +146,43 @@ Method | Description
 `defaultIfEmpty` | If the source sequence is empty, returns a sequence with a single element with default value. Otherwise the elements from the source sequence are returned.
 `valueIfEmpty(value)` | If the source sequence is empty, returns a sequence with a single element with the value `value`. Otherwise the elements from the source sequence are returned.
 `join(source, key1(T1), key2(T2), joiner(T1, T2))` | This function _joins_ two sequences(`this` and `source`) into a new sequence. If both the `key` functions produce the same value, then `joiner` is called with the elements from the corresponding sequences and the result of `joiner` is present in the resulting sequence. You can think of it as similar to how tables are joined in SQL. See examples in (TDB)
+`makeHeapEnumerable` | Creates a copy of the sequence object which lives on the heap. The returned object is responsible for the lifetime of the heap object. See [More details](#more-details) for further information.
 
+
+### Sequence reducing functions
+
+The following methods do not return a new sequence. Most of them reduce the sequence to a single value. At the end there are two methods which break this pattern.
+
+Method | Description
+------ | -----------
+`bool all(pred)` | Applies the predicate `pred` to every element in the sequence. The function returns true if the predicate is true for every element. Otherwise it returns false.
+`bool any(pred)` | Applies the predicate `pred` to every element in the sequence. The function returns true if the predicate is true for any element. Otherwise it returns false.
+`bool contains(value)` | Returns true if an element with value `value` can be found in the sequence.
+`size_t count()` | Returns the number of elements in the sequence after all filtering and transformations have been applied.
+`size_t count(pred)` | Returns the number of elements in the sequence which fullfills the predicate `pred`. Same as if you'd call `this.filter(pred).count()`
+`T elementAt(index)` | Returns the value of the element at index `index` in the sequence. Throws std::out_of_range if the sequence is shorter than the supplied index.
+`T elementAtOrDefault(index)` | Returns the value of the element at index `index` in the sequence. Returns a default-initialized T if the sequence is shorter than the supplied index.
+`T elementAtOrValue(index)` | Returns the value of the element at index `index` in the sequence. Returns `value` if the sequence is shorter than the supplied index.
+`T first()` | Returns the value of the first element in the sequence. Throws std::out_of_range if the sequence is empty.
+`T first(pred)` | Returns the value of the first element in the sequence that fullfills `pred`. Throws std::out_of_range if the sequence is empty or no such element is found.
+`T firstOrDefault()` | Returns the value of the first element in the sequence. Returns a default-initialized T if the sequence is empty.
+`T firstOrDefault(pred)` | Returns the value of the first element in the sequence that fullfills `pred`. Returns a default-initialized T if the sequence is empty or no such element is found.
+`T last()` | Returns the value of the last element in the sequence. Throws std::out_of_range if the sequence is empty.
+`T last(pred)` | Returns the value of the last element in the sequence that fullfills `pred`. Throws std::out_of_range if the sequence is empty or no such element is found.
+`T lastOrDefault()` | Returns the value of the last element in the sequence. Returns a default-initialized T if the sequence is empty.
+`T lastOrDefault(pred)` | Returns the value of the last element in the sequence that fullfills `pred`. Returns a default-initialized T if the sequence is empty or no such element is found.
+`T max()` | Returns the largest value in the sequence. Throws std::runtime_error if the sequence is empty.
+`T max(transform)` | Returns the value in the sequence that is largest after applying `transform` on the element. Throws std::runtime_error if the sequence is empty.
+`T min()` | Returns the smallest value in the sequence. Throws std::runtime_error if the sequence is empty.
+`T min(transform)` | Returns the value in the sequence that is smallest after applying `transform` on the element. Throws std::runtime_error if the sequence is empty.
+`bool sequenceEqual(source)` | Returns true if the elemens in `this` and `source` are equal. Elements are not reordered, but compared in the order they arrive in the source sequences. If the sequences are of different length, false is returned.
+`Container toContainer<Container>()` | Creates a `Container` and populates it with the elements from the sequence.
+`Container<T, Alloc> toContainer<Container, Alloc>()` | Creates a `Container<T,Alloc>` and populates it with the elements from the sequence. If not specified, Alloc defaults to `std::allocator<T>`
+`Container<T, Alloc> toContainer<Container, Alloc>()` | Creates a `Container<T,Alloc>` and populates it with the elements from the sequence. If not specified, Alloc defaults to `std::allocator<T>`
+`Container<T, Compare, Alloc> toContainer<Container, Compare, Alloc>()` | Creates a `Container<T,Compare, Alloc>` and populates it with the elements from the sequence. If not specified, `Compare` defaults to `std::less<T>` and `Alloc` defaults to `std::allocator<T>`
+
+--- | ---
+`forEach(sink)` | Calls `sink` once for every element in the sequence.
 
 ## More details
 
