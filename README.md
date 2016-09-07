@@ -12,7 +12,7 @@ Some core concepts in the library is _deffered execution_, _dependency inversion
    * [Transforms](#transforming-sequences)
 * [Methods](#methods)
    * [Sequence transforming functions](#sequence-transforming-functions)
-   * Sequence reducing functions (TBD)
+   * [Sequence reducing functions](#sequence-reducing-functions)
 * [More details](#more-details)
 	
 
