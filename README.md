@@ -181,9 +181,9 @@ Method | Description
 `Container<T, Alloc> toContainer<Container, Alloc>()` | Creates a `Container<T,Alloc>` and populates it with the elements from the sequence. If not specified, Alloc defaults to `std::allocator<T>`
 `Container<T, Alloc> toContainer<Container, Alloc>()` | Creates a `Container<T,Alloc>` and populates it with the elements from the sequence. If not specified, Alloc defaults to `std::allocator<T>`
 `Container<T, Compare, Alloc> toContainer<Container, Compare, Alloc>()` | Creates a `Container<T,Compare, Alloc>` and populates it with the elements from the sequence. If not specified, `Compare` defaults to `std::less<T>` and `Alloc` defaults to `std::allocator<T>`
-`reduce(Reducer(value, ackumulator), Seed)` | Reduces the sequence. Throws `std::out_of_range` on empty sequences. `Seed` is used as value for `ackumulator` on first iteration. [Source](include/enumerable/enumerableTemplate.h#L136-L152), [Examples](test/test_reduce.cpp)
-`reduce(Reducer(value, ackumulator=Seed))` | Functors(lambdas etc) only! Reduces the sequence. Throws `std::out_of_range` on empty sequences. `Seed` is used as value for `ackumulator` on first iteration.  [Source](include/enumerable/enumerableTemplate.h#L96-L116), [Examples](test/test_reduce.cpp)
-`reduce(Reducer(value, ackumulator))` | Reduces the sequence. Throws `std::out_of_range` on empty sequences. The first element is used as value for `ackumulator` on first iteration. [Source](include/enumerable/enumerableTemplate.h#L118-L134), [Examples](test/test_reduce.cpp)
+`reduce(Reducer(value, ackumulator), Seed)` | Reduces the sequence. Throws `std::out_of_range` on empty sequences. `Seed` is used as value for `ackumulator` on first iteration. [Source](include/enumerable/enumerableTemplate.h#L136-L152), [Examples/Tests](test/test_reduce.cpp)
+`reduce(Reducer(value, ackumulator=Seed))` | Functors(lambdas etc) only! Reduces the sequence. Throws `std::out_of_range` on empty sequences. `Seed` is used as value for `ackumulator` on first iteration.  [Source](include/enumerable/enumerableTemplate.h#L96-L116), [Examples/Tests](test/test_reduce.cpp)
+`reduce(Reducer(value, ackumulator))` | Reduces the sequence. Throws `std::out_of_range` on empty sequences. The first element is used as value for `ackumulator` on first iteration. [Source](include/enumerable/enumerableTemplate.h#L118-L134), [Examples/Tests](test/test_reduce.cpp)
 --- | ---
 `forEach(sink)` | Calls `sink` once for every element in the sequence.
 
