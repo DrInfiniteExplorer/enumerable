@@ -1,0 +1,27 @@
+# This is a comment.
+
+clone_folder: c:\projects\enumerable
+shallow_clone: true
+
+platform:
+    - Win32
+#    - x64
+
+configuration:
+    - Debug
+    - Release
+
+# scripts to run before build
+before_build:
+    - echo "Running cmake..."
+    - cd c:\projects\enumerable
+    - cmake --version
+    - cmake .
+
+build:
+    verbosity: minimal
+    project: enumerable.sln
+
+test_script:
+  - cd c:\projects\enumerable
+  - ctest
