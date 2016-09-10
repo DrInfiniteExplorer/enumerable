@@ -1,4 +1,8 @@
-[![Build Status](https://travis-ci.org/DrInfiniteExplorer/enumerable.svg?branch=master)](https://travis-ci.org/DrInfiniteExplorer/enumerable)
+
+CI System | Compilers | Status (master)
+---|---|---
+Travis CI | gcc, clang | [![Build Status](https://travis-ci.org/DrInfiniteExplorer/enumerable.svg?branch=master)](https://travis-ci.org/DrInfiniteExplorer/enumerable)  
+Appveyor | MSVC | [![Build status](https://ci.appveyor.com/api/projects/status/xwopw8a25m6p70b9/branch/master?svg=true)](https://ci.appveyor.com/project/DrInfiniteExplorer/enumerable/branch/master)
 
 # Enumerable
 Enumerable is a library inspired by [IEnumerable](https://msdn.microsoft.com/en-us/library/9eekhta0(v=vs.110).aspx) in c#. The twist is that it is implemented in c++ !
