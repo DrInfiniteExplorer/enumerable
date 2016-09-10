@@ -4,6 +4,7 @@
 #include <exception>
 #include <stdexcept>
 #include <utility>
+#include <functional>
 
 #include "ienumerable.h"
 
@@ -87,6 +88,67 @@ struct EnumerableBase : virtual public IEnumerable<T>
 	Derived save()
 	{
 		return Derived(*static_cast<Derived*>(this));
+	}
+	
+	// Note: reduce is not a port of Aggregate. The arguments to the aggregator
+	//  is in the reverse order.
+	
+	// reduce(T reducer(T value, T ackumulated=seed) )
+	// Reduces the sequence with reducer. Initial seed from default argument.
+	// Throws std::out_of_range if the sequence is empty.
+	// NOTE: This only works with functor objects that have two overloads of operator(),
+	//  where one version takes two parameters while the other takes one.
+	//  If you wish to use a normal function to perform your reduction, you need to supply
+	//   a seed value manually, or wrap it in a lambda with a default-value-seed.
+	template <typename Reducer, typename std::enable_if<std::is_convertible<Reducer, std::function<T(T)>>::value, int>::type = 0>
+	T reduce(Reducer&& reducer)
+	{
+		if(!this->moveNext())
+		{
+			throw std::out_of_range("cant aggregate an empty sequence");
+		}
+		T result = reducer(this->value());
+		while(this->moveNext())
+		{
+			result = reducer(this->value(), result);
+		}
+		return result;
+	}
+	
+	// reduce(T reducer(T value, T ackumulated) )
+	// Reduces the value. First element is the seed.
+	// Throws std::out_of_range if the sequence is empty.
+	template <typename Reducer, typename std::enable_if<!std::is_convertible<Reducer, std::function<T(T)>>::value, int>::type = 0>
+	T reduce(Reducer&& reducer)
+	{
+		if(!this->moveNext())
+		{
+			throw std::out_of_range("cant aggregate an empty sequence");
+		}
+		T result = this->value();
+		while(this->moveNext())
+		{
+			result = reducer(this->value(), result);
+		}
+		return result;
+	}
+
+	// reduce( T reducer(T value, T ackumulated), T seed)
+	// Reduces the sequence. seed is used as the seed.
+	// Throws std::out_of_range if the sequence is empty.
+	template <typename Reducer>
+	T reduce(Reducer&& reducer, T seed)
+	{
+		if(!this->moveNext())
+		{
+			throw std::out_of_range("cant aggregate an empty sequence");
+		}
+		T result = reducer(this->value(), seed);
+		while(this->moveNext())
+		{
+			result = reducer(this->value(), result);
+		}
+		return result;
 	}
 
 	// select() takes a transformation function which is applied to every element in the sequence.

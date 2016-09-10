@@ -54,7 +54,6 @@ int main(int argc, char* argv[])
 		s.m_enum.forEach(printFloat); printf("\n");
 
 		auto&& ss = fromFunction(array);
-		int asd;
 		ss.m_enum.forEach(printFloat); printf("\n");
 	}
 	catch (std::exception& e)
