@@ -69,7 +69,7 @@ printf("Max: %d\n", Enumerable(staticIntArray).max());
 // Max: 5
 ```
 
-Besides `max` there are `all(pred)`, `any(pred)`, `contains`, `count`, `count(pred)`, various `elementAt(idx), first, last`, `min`, `sequenceEqual(seq)`, and `toContainer`. Thus far there is no generic `reduce, accumulate` or `aggregate` function.
+Besides `max` there are `all(pred)`, `any(pred)`, `contains`, `count`, `count(pred)`, various `elementAt(idx), first, last`, `min`, `sequenceEqual(seq)`, and `toContainer`. There is also a very generic `reduce` function which you can use to reduce the sequence however you like!
 
 Some of these mentioned functions take a `pred` parameter, which is a predicate. `count(pred)` only counts the elements that pass the predicate, while `any(pred)` returns true of any element in the sequence passes the predicate.
 
@@ -155,6 +155,7 @@ The following methods do not return a new sequence. Most of them reduce the sequ
 
 Method | Description
 ------ | -----------
+`aggregate` | There is **no** `aggregate` in this version of IEnumerable. See `reduce`. Note that the arguments are reversed when compared to Aggregate.
 `bool all(pred)` | Applies the predicate `pred` to every element in the sequence. The function returns true if the predicate is true for every element. Otherwise it returns false.
 `bool any(pred)` | Applies the predicate `pred` to every element in the sequence. The function returns true if the predicate is true for any element. Otherwise it returns false.
 `bool contains(value)` | Returns true if an element with value `value` can be found in the sequence.
@@ -180,6 +181,9 @@ Method | Description
 `Container<T, Alloc> toContainer<Container, Alloc>()` | Creates a `Container<T,Alloc>` and populates it with the elements from the sequence. If not specified, Alloc defaults to `std::allocator<T>`
 `Container<T, Alloc> toContainer<Container, Alloc>()` | Creates a `Container<T,Alloc>` and populates it with the elements from the sequence. If not specified, Alloc defaults to `std::allocator<T>`
 `Container<T, Compare, Alloc> toContainer<Container, Compare, Alloc>()` | Creates a `Container<T,Compare, Alloc>` and populates it with the elements from the sequence. If not specified, `Compare` defaults to `std::less<T>` and `Alloc` defaults to `std::allocator<T>`
+`reduce(Reducer(value, ackumulator), Seed)` | Reduces the sequence. Throws `std::out_of_range` on empty sequences. `Seed` is used as value for `ackumulator` on first iteration. [Source](include/enumerable/enumerableTemplate.h#L136-L152)
+`reduce(Reducer(value, ackumulator=Seed))` | Functors(lambdas etc) only! Reduces the sequence. Throws `std::out_of_range` on empty sequences. `Seed` is used as value for `ackumulator` on first iteration.  [Source](include/enumerable/enumerableTemplate.h#L96-L116)
+`reduce(Reducer(value, ackumulator))` | Reduces the sequence. Throws `std::out_of_range` on empty sequences. The first element is used as value for `ackumulator` on first iteration. [Source](include/enumerable/enumerableTemplate.h#L118-L134)
 --- | ---
 `forEach(sink)` | Calls `sink` once for every element in the sequence.
 
