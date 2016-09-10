@@ -59,6 +59,8 @@ endfunction()
 
 add_google_test(test_sequenceEqual.cpp)
 
+add_google_test(test_reduce.cpp)
+
 add_named_test("heap.enumerable" test_heap_enumerable.cpp)
 expect("heap.enumerable" "\n0 1 2 3 4 5 6 \n")
 expect("heap.enumerable" "\n0.000000 1.000000 2.000000 3.000000 4.000000 5.000000 6.000000 \n")
