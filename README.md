@@ -180,8 +180,8 @@ Method | Description
 `Container toContainer<Container>()` | Creates a `Container` and populates it with the elements from the sequence.
 `Container<T, Alloc> toContainer<Container, Alloc>()` | Creates a `Container<T,Alloc>` and populates it with the elements from the sequence. If not specified, Alloc defaults to `std::allocator<T>`
 `Container<T, Alloc> toContainer<Container, Alloc>()` | Creates a `Container<T,Alloc>` and populates it with the elements from the sequence. If not specified, Alloc defaults to `std::allocator<T>`
-`reduce(Reducer(value, accumulator), Seed)` | Reduces the sequence. Throws `std::out_of_range` on empty sequences. `Seed` is used as value for `accumulator` on first iteration. [Source](include/enumerable/enumerableTemplate.h#L136-L152), [Examples/Tests](test/test_reduce.cpp)
 `Container<T, Compare, Alloc> toContainer<Container, Compare, Alloc>()` | Creates a `Container<T,Compare, Alloc>` and populates it with the elements from the sequence. If not specified, `Compare` defaults to `std::less<T>` and `Alloc` defaults to `std::allocator<T>`
+`reduce(Reducer(value, accumulator), Seed)` | Reduces the sequence. Throws `std::out_of_range` on empty sequences. `Seed` is used as value for `accumulator` on first iteration. [Source](include/enumerable/enumerableTemplate.h#L136-L152), [Examples/Tests](test/test_reduce.cpp)
 `reduce(Reducer(value, accumulator=Seed))` | Functors(lambdas etc) only! Reduces the sequence. Throws `std::out_of_range` on empty sequences. `Seed` is used as value for `accumulator` on first iteration.  [Source](include/enumerable/enumerableTemplate.h#L96-L116), [Examples/Tests](test/test_reduce.cpp)
 `reduce(Reducer(value, accumulator))` | Reduces the sequence. Throws `std::out_of_range` on empty sequences. The first element is used as value for `accumulator` on first iteration. [Source](include/enumerable/enumerableTemplate.h#L118-L134), [Examples/Tests](test/test_reduce.cpp)
 --- | ---
