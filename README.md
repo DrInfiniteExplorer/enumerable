@@ -163,7 +163,7 @@ Method | Description
 `size_t count(pred)` | Returns the number of elements in the sequence which fullfills the predicate `pred`. Same as if you'd call `this.filter(pred).count()`
 `T elementAt(index)` | Returns the value of the element at index `index` in the sequence. Throws std::out_of_range if the sequence is shorter than the supplied index.
 `T elementAtOrDefault(index)` | Returns the value of the element at index `index` in the sequence. Returns a default-initialized T if the sequence is shorter than the supplied index.
-`T elementAtOrValue(index)` | Returns the value of the element at index `index` in the sequence. Returns `value` if the sequence is shorter than the supplied index.
+`T elementAtOrValue(index, value)` | Returns the value of the element at index `index` in the sequence. Returns `value` if the sequence is shorter than the supplied index.
 `T first()` | Returns the value of the first element in the sequence. Throws std::out_of_range if the sequence is empty.
 `T first(pred)` | Returns the value of the first element in the sequence that fullfills `pred`. Throws std::out_of_range if the sequence is empty or no such element is found.
 `T firstOrDefault()` | Returns the value of the first element in the sequence. Returns a default-initialized T if the sequence is empty.
@@ -172,10 +172,10 @@ Method | Description
 `T last(pred)` | Returns the value of the last element in the sequence that fullfills `pred`. Throws std::out_of_range if the sequence is empty or no such element is found.
 `T lastOrDefault()` | Returns the value of the last element in the sequence. Returns a default-initialized T if the sequence is empty.
 `T lastOrDefault(pred)` | Returns the value of the last element in the sequence that fullfills `pred`. Returns a default-initialized T if the sequence is empty or no such element is found.
-`T max()` | Returns the largest value in the sequence. Throws std::runtime_error if the sequence is empty.
-`T max(transform)` | Returns the value in the sequence that is largest after applying `transform` on the element. Throws std::runtime_error if the sequence is empty.
-`T min()` | Returns the smallest value in the sequence. Throws std::runtime_error if the sequence is empty.
-`T min(transform)` | Returns the value in the sequence that is smallest after applying `transform` on the element. Throws std::runtime_error if the sequence is empty.
+`T max()` | Returns the largest value in the sequence. Throws std::runtime_error if the sequence is empty. Uses the `>` operator to determine largerness.
+`T max(transform)` | Returns the value in the sequence that is largest after applying `transform` on the element. Throws std::runtime_error if the sequence is empty.  Uses the `>` operator to determine largerness.
+`T min()` | Returns the smallest value in the sequence. Throws std::runtime_error if the sequence is empty.  Uses the `<` operator to determine largerness.
+`T min(transform)` | Returns the value in the sequence that is smallest after applying `transform` on the element. Throws std::runtime_error if the sequence is empty.  Uses the `<` operator to determine largerness.
 `bool sequenceEqual(source)` | Returns true if the elemens in `this` and `source` are equal. Elements are not reordered, but compared in the order they arrive in the source sequences. If the sequences are of different length, false is returned.
 `Container toContainer<Container>()` | Creates a `Container` and populates it with the elements from the sequence.
 `Container<T, Alloc> toContainer<Container, Alloc>()` | Creates a `Container<T,Alloc>` and populates it with the elements from the sequence. If not specified, Alloc defaults to `std::allocator<T>`
