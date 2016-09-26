@@ -57,6 +57,7 @@ function(expect TEST_NAME OUTPUT)
 	)	
 endfunction()
 
+add_google_test(test_take.cpp)
 add_google_test(test_sequenceEqual.cpp)
 
 add_google_test(test_reduce.cpp)
