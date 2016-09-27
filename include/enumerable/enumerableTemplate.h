@@ -58,7 +58,7 @@ struct ZipEnumerable;
 template <typename T>
 struct HeapEnumerable;
 
-template <typename T, typename Derived>
+template <typename T, typename Derived, typename Predicate>
 struct TakeEnumerable;
 
 // Used to deduce enumeration type of an Enumerable
@@ -639,9 +639,15 @@ struct EnumerableBase : virtual public IEnumerable<T>
 		);
 	}
 	
-	TakeEnumerable<T, Derived> take(int count)
+	TakeEnumerable<T, Derived, void> take(int count)
 	{
-		return TakeEnumerable<T, Derived>(static_cast<Derived&>(*this), count);
+		return TakeEnumerable<T, Derived, void>(static_cast<Derived&>(*this), count);
+	}
+
+	template <typename Predicate>
+	TakeEnumerable<T, Derived, Predicate> take(Predicate&& pred)
+	{
+		return TakeEnumerable<T, Derived, Predicate>(static_cast<Derived&>(*this), std::forward<Predicate>(pred));
 	}
 	
 	// toContainer for explicit containers. 
