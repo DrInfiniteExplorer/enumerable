@@ -57,7 +57,6 @@ function(expect TEST_NAME OUTPUT)
 	)	
 endfunction()
 
-add_google_test(test_take.cpp)
 add_google_test(test_sequenceEqual.cpp)
 
 add_google_test(test_reduce.cpp)
@@ -71,3 +70,5 @@ add_google_test(test_iterator_foreach.cpp)
 add_google_test(test_tocontainer.cpp)
 
 add_google_test(test_foreach_lambda.cpp)
+
+add_google_test(test_take.cpp)
