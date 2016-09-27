@@ -136,6 +136,9 @@ Method | Description
 `select(transform)` | A sequence where _transform_ is applied to every element. Can change the element type of the sequence.
 `where(predicate)` | Filters the sequence, keeping elements that pass `predicate`
 `concat(sequence)` | Returns a sequence which consists of the elements of `this` followed by the elements of `sequence`
+`take(count)` | Returns a sequence of up to `count` elements. [Examples/Tests](test/test_take.cpp#L13-L35)
+`takeWhile(bool Predicate(T))` | Contains source elements until `Predicate` returns false. [Examples/Tests](test/test_take.cpp#L37-L53)
+`takeWhile(bool Predicate(T, size_t index))` | Contains source elements until `Predicate` returns false. `index` is zero-indexed. [Examples/Tests](test/test_take.cpp#L55-L77)
 **Type Casts** | ---
 `dynamicCast<T>` | Applies `dynamic_cast<T>` to every element in the source sequence.
 `staticCast<T>` | Applies `static_cast<T>` to every element in the source sequence.
@@ -185,9 +188,9 @@ Method | Description
 `Container<T, Alloc> toContainer<Container, Alloc>()` | Creates a `Container<T,Alloc>` and populates it with the elements from the sequence. If not specified, Alloc defaults to `std::allocator<T>`
 `Container<T, Alloc> toContainer<Container, Alloc>()` | Creates a `Container<T,Alloc>` and populates it with the elements from the sequence. If not specified, Alloc defaults to `std::allocator<T>`
 `Container<T, Compare, Alloc> toContainer<Container, Compare, Alloc>()` | Creates a `Container<T,Compare, Alloc>` and populates it with the elements from the sequence. If not specified, `Compare` defaults to `std::less<T>` and `Alloc` defaults to `std::allocator<T>`
-`reduce(Reducer(value, accumulator), Seed)` | Reduces the sequence. Throws `std::out_of_range` on empty sequences. `Seed` is used as value for `accumulator` on first iteration. [Source](include/enumerable/enumerableTemplate.h#L136-L152), [Examples/Tests](test/test_reduce.cpp)
-`reduce(Reducer(value, accumulator=Seed))` | Functors(lambdas etc) only! Reduces the sequence. Throws `std::out_of_range` on empty sequences. `Seed` is used as value for `accumulator` on first iteration.  [Source](include/enumerable/enumerableTemplate.h#L96-L116), [Examples/Tests](test/test_reduce.cpp)
-`reduce(Reducer(value, accumulator))` | Reduces the sequence. Throws `std::out_of_range` on empty sequences. The first element is used as value for `accumulator` on first iteration. [Source](include/enumerable/enumerableTemplate.h#L118-L134), [Examples/Tests](test/test_reduce.cpp)
+`reduce(Reducer(value, accumulator), Seed)` | Reduces the sequence. Throws `std::out_of_range` on empty sequences. `Seed` is used as value for `accumulator` on first iteration. [Source](include/enumerable/enumerableTemplate.h#L139-L155), [Examples/Tests](test/test_reduce.cpp)
+`reduce(Reducer(value, accumulator=Seed))` | Functors(lambdas etc) only! Reduces the sequence. Throws `std::out_of_range` on empty sequences. `Seed` is used as value for `accumulator` on first iteration.  [Source](include/enumerable/enumerableTemplate.h#L99-L119), [Examples/Tests](test/test_reduce.cpp)
+`reduce(Reducer(value, accumulator))` | Reduces the sequence. Throws `std::out_of_range` on empty sequences. The first element is used as value for `accumulator` on first iteration. [Source](include/enumerable/enumerableTemplate.h#L121-L137), [Examples/Tests](test/test_reduce.cpp)
 --- | ---
 `forEach(sink)` | Calls `sink` once for every element in the sequence.
 
