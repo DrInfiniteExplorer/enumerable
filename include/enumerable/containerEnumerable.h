@@ -47,13 +47,15 @@ private:
 // Works with simple containers like std::vector, std::list, etc.
 // Basically anything that implements ::iterator, .begin() and .end()
 template <typename T, template <typename, typename> class Container, typename ContainerAllocator>
-ContainerEnumerable<T, Container<T, ContainerAllocator>> Enumerable(Container<T, ContainerAllocator>& container)
+auto Enumerable(Container<T, ContainerAllocator>& container,
+	typename Container<T, ContainerAllocator>::iterator* = nullptr)
 {
 	return ContainerEnumerable<T, Container<T, ContainerAllocator>>(container);
 }
 
 template <typename T, template <typename, typename, typename> class Container, typename ContainerCompare, typename ContainerAllocator>
-ContainerEnumerable<T, Container<T, ContainerCompare, ContainerAllocator>> Enumerable(Container<T, ContainerCompare, ContainerAllocator>& container)
+auto Enumerable(Container<T, ContainerCompare, ContainerAllocator>& container,
+	typename Container<T, ContainerCompare, ContainerAllocator>::iterator* = nullptr)
 {
 	return ContainerEnumerable<T, Container<T, ContainerCompare, ContainerAllocator>>(container);
 }

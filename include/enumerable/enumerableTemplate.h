@@ -683,7 +683,12 @@ struct EnumerableBase : virtual public IEnumerable<T>
 		}
 		return ret;		
 	}
-	
-	
+		
 };
 
+template <typename T, typename Derived>
+auto Enumerable(const EnumerableBase<T, Derived>& toCopy) 
+-> Derived
+{
+	return static_cast<const Derived&>(toCopy);
+}
