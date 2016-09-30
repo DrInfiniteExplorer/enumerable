@@ -17,4 +17,5 @@
 #include <enumerable/valueIfEmptyEnumerable.h>
 #include <enumerable/whereEnumerable.h>
 #include <enumerable/takeEnumerable.h>
+#include <enumerable/skipEnumerable.h>
 

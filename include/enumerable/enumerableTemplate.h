@@ -61,6 +61,9 @@ struct HeapEnumerable;
 template <typename T, typename Derived, typename Predicate>
 struct TakeEnumerable;
 
+template <typename T, typename Derived, typename Predicate>
+struct SkipEnumerable;
+
 // Used to deduce enumeration type of an Enumerable
 template <class Enumerable>
 struct ValueType
@@ -639,6 +642,17 @@ struct EnumerableBase : virtual public IEnumerable<T>
 		);
 	}
 	
+	SkipEnumerable<T, Derived, void> skip(int count)
+	{
+		return SkipEnumerable<T, Derived, void>(static_cast<Derived&>(*this), count);
+	}
+
+	template <typename Predicate>
+	SkipEnumerable<T, Derived, Predicate> skip(Predicate&& pred)
+	{
+		return SkipEnumerable<T, Derived, Predicate>(static_cast<Derived&>(*this), std::forward<Predicate>(pred));
+	}
+
 	TakeEnumerable<T, Derived, void> take(int count)
 	{
 		return TakeEnumerable<T, Derived, void>(static_cast<Derived&>(*this), count);
