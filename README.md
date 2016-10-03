@@ -17,6 +17,7 @@ Some core concepts in the library is _deffered execution_, _dependency inversion
 * [Methods](#methods)
    * [Sequence transforming functions](#sequence-transforming-functions)
    * [Sequence reducing functions](#sequence-reducing-functions)
+   * [Enumerable-overloads](#enumerable-overloads)
 * [More details](#more-details)
 	
 
@@ -196,6 +197,19 @@ Method | Description
 `reduce(Reducer(value, accumulator))` | Reduces the sequence. Throws `std::out_of_range` on empty sequences. The first element is used as value for `accumulator` on first iteration. [Source](include/enumerable/enumerableTemplate.h#L124-L140), [Examples/Tests](test/test_reduce.cpp)
 --- | ---
 `forEach(sink)` | Calls `sink` once for every element in the sequence.
+
+### Enumerable overloads
+
+These are the overloads of Enumerable
+
+Signature | Description
+------ | -----------
+`Enumerable<T,size>(T(&src)[size])` | Used on static sized arrays of type `T`. `T` and `size` are derived from the argument. [Source](include/enumerable/arrayEnumerable.h#L52-L57)
+`Enumerable<T>(T* t, int size)` | Used on pointer type / dynamically sized arrays of type `T`. `T` is derived from the argument. `size` specifies the length of the array, counted in contiguous `T`s. [Source](include/enumerable/arrayEnumerable.h#L59-L64)
+`Enumerable<Container<T, Alloc>>(Container& container)` | Valid for most `std` container types. In fact, anything that has .begin(), .end() and ::iterator works. The generated object contains a reference to the source container. [Source](include/enumerable/containerEnumerable.h#L46-L54)
+`Enumerable<Container<T, Compare, Alloc>>(Container& container)` | Valid for most `std` container types. In fact, anything that has .begin(), .end() and ::iterator works. The generated object contains a reference to the source container. [Source](include/enumerable/containerEnumerable.h#L56-L61)
+`Enumerable(Generator)` | Calls the supplied `Generator` on `moveNext()` to generate values for `value()`. Thus represents an infinite sequence of values. `Generator` should return a value, and be callable with no arguments. [Source](include/enumerable/enumerableTemplate.h#L710-L724) [Examples/Tests](test/test_enumerable.cpp#L15-L23)
+`Enumerable(const EnumerableBase<T,Derived>&)` | Returns a copy of the supplied enumerable. [Source](include/enumerable/enumerableTemplate.h#L703-L708) [Examples/Tests](test/test_enumerable.cpp#L7-L13)
 
 ## More details
 

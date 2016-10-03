@@ -706,3 +706,20 @@ auto Enumerable(const EnumerableBase<T, Derived>& toCopy)
 {
 	return static_cast<const Derived&>(toCopy);
 }
+
+template <typename Generator, typename Element = typename std::result_of<Generator()>::type>
+auto Enumerable(Generator&& generator)
+{
+	struct GeneratorEnumerable : public EnumerableBase<Element, GeneratorEnumerable>
+	{
+		GeneratorEnumerable(Generator&& gen) : generator(gen) {}
+		Generator generator;
+		Element m_value;
+		
+		virtual Element value() override { return m_value; };
+		virtual bool moveNext() override { m_value = generator(); return true; }
+	};
+	
+	return GeneratorEnumerable{generator};
+}
+

@@ -11,3 +11,14 @@ TEST(Enumerable, Fallthrough)
 	auto cpy = Enumerable(src);
 	EXPECT_TRUE(src.sequenceEqual(cpy));	
 }
+
+TEST(Enumerable, FunctionGenerator)
+{
+	int idx = 0;
+	auto generator = [&]{
+		return ++idx;
+	};
+	auto seq = Enumerable(generator);
+	EXPECT_EQ(1234, seq.take(1234).last());	
+}
+
