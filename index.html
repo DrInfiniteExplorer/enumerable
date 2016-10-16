@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Title</title>
+    <meta charset="utf-8">
+<style>
+      @font-face{
+        font-family: 'Droid Serif';
+        src: url('DroidSerif.ttf');
+      }
+      @font-face{
+        font-family: 'Yanone Kaffeesatz';
+        src: url('YanoneKaffeesatz-Regular.ttf');
+      }
+      @font-face{
+        font-family: 'Ubuntu Mono';
+        src: url('UbuntuMono-Regular.ttf');
+      }
+	  
+      body {
+        font-family: 'Droid Serif';
+      }
+      h1, h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: 400;
+        margin-bottom: 0;
+      }
+      .remark-slide-content h1 { font-size: 3em; }
+      .remark-slide-content h2 { font-size: 2em; }
+      .remark-slide-content h3 { font-size: 1.6em; }
+      .footnote {
+        position: absolute;
+        bottom: 3em;
+      }
+      li p { line-height: 1.25em; }
+      .red { color: #fa0000; }
+      .large { font-size: 2em; }
+      a, a > code {
+        color: rgb(249, 38, 114);
+        text-decoration: none;
+      }
+      code {
+        background: #e7e8e2;
+        border-radius: 5px;
+      }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+      .remark-code-line-highlighted     { background-color: #373832; }
+      .pull-left {
+        float: left;
+        width: 47%;
+      }
+      .pull-right {
+        float: right;
+        width: 47%;
+      }
+      .pull-right ~ p {
+        clear: both;
+      }
+      #slideshow .slide .content code {
+        font-size: 0.8em;
+      }
+      #slideshow .slide .content pre code {
+        font-size: 0.9em;
+        padding: 15px;
+      }
+      .inverse {
+        background: #272822;
+        color: #777872;
+        text-shadow: 0 0 20px #333;
+      }
+      .inverse h1, .inverse h2 {
+        color: #f3f3f3;
+        line-height: 0.8em;
+      }
+
+      /* Slide-specific styling */
+      #slide-inverse .footnote {
+        bottom: 12px;
+        left: 20px;
+      }
+      #slide-how .slides {
+        font-size: 0.9em;
+        position: absolute;
+        top:  151px;
+        right: 140px;
+      }
+      #slide-how .slides h3 {
+        margin-top: 0.2em;
+      }
+      #slide-how .slides .first, #slide-how .slides .second {
+        padding: 1px 20px;
+        height: 90px;
+        width: 120px;
+        -moz-box-shadow: 0 0 10px #777;
+        -webkit-box-shadow: 0 0 10px #777;
+        box-shadow: 0 0 10px #777;
+      }
+      #slide-how .slides .first {
+        background: #fff;
+        position: absolute;
+        top: 20%;
+        left: 20%;
+        z-index: 1;
+      }
+      #slide-how .slides .second {
+        position: relative;
+        background: #fff;
+        z-index: 0;
+      }
+
+      /* Two-column layout */
+      .left-column {
+        color: #777;
+        width: 20%;
+        height: 92%;
+        float: left;
+      }
+        .left-column h2:last-of-type, .left-column h3:last-child {
+          color: #000;
+        }
+      .right-column {
+        width: 75%;
+        float: right;
+        padding-top: 1em;
+      }
+    </style>  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle
+
+# Bringing IEnumerable to C++
+
+Pierre LeMoine
+
+---
+
+.left-column[
+## Introduction
+]
+
+.right-column[
+
+### Basics
+* Pierre LeMoine
+* 28 years old
+* Obtained Master in Computer Science at LiTH
+* Sekonden in Linköping 2013 - 2014 
+* Working at Saab in Stockholm 2014 - ? 
+
+### GitHub
+- https://github.com/DrInfiniteExplorer
+
+### Video of presentation
+- https://www.youtube.com/channel/UC_LAXFBuK7J2J6NLiYzdPEA
+
+.footnote[.red[*] Examples are illustrative, may not compile out of the box]
+]
+
+---
+
+.left-column[
+## What is Enumerable?
+]
+
+.right-column[
+
+Wrap collections in objects representing a _sequence_
+
+Objects have functions to refine or reduce the sequence
+
+Refined sequences represent all operations thus far
+
+Lazily evaluated - _Nothing_ is done until iteration!
+
+Main purpose
+
+- Let you clearly and concisely expresses your _intent_.
+- Reduce the amount of boilderplate and line noise.
+
+]
+
+---
+.left-column[
+## Why make Enumerable
+]
+
+.right-column[
+
+C++ is lacking primitives that make life as a programmer easier when working with collections and sequences.
+
+- Reducing a collection to a value?
+ - Thats a loop
+
+```c++
+int max = 0;
+for(auto elem; vector)
+{
+  max = std::max(max, elem);
+}
+```
+
+```c++
+int max = std::accumulate(
+     vector.begin(), vector.end(), std::max<int>);
+;
+```   
+
+This could instead be written as
+```c++
+int max = Enumerable(vector).max();
+int max = Enumerable(vector).reduce(std::max<int>);
+```
+
+]
+---
+
+.left-column[
+## Why make Enumerable
+]
+
+.right-column[
+
+C++ is lacking primitives that make life as a programmer easier when working with collections and sequences.
+
+- Filtering out certain values?
+ - Thats a loop
+
+```c++
+std::vector<int> filtered;
+for(auto elem; vector)
+{
+  if(isOdd(elem)) filtered.push_back(elem);
+}
+```   
+
+```c++
+std::vector<int> filtered;
+std::copy_if(vector.begin(), vector.end(),
+  filtered.begin(), isOdd);
+```
+
+This could instead be written as
+```c++
+auto filtered = Enumerable(vector)
+  .where(isOdd)
+  .toContainer<std::vector>();
+```
+]
+
+---
+
+.left-column[
+## Why make Enumerable
+]
+
+.right-column[
+
+C++ is lacking primitives that make life as a programmer easier when working with collections and sequences.
+
+- Transforming elements?
+ - Thats a loop
+
+```c++
+std::vector<std::string> stringVector;
+for(auto elem; vector)
+{
+  stringVector.push_back(intToString(elem));
+}
+```
+
+```c++
+std::vector<std::string> stringVector;
+std::transform(vector.begin(), vector.end(),
+  std::back_inserter(stringVector), intToString);
+```
+
+This could instead be written as
+```c++
+auto stringVector = Enumerable(vector)
+  .select(intToString)
+  .toContainer<std::vector>();
+```
+]
+---
+
+.left-column[
+## Why make Enumerable
+]
+
+.right-column[
+
+C++ is lacking primitives that make life as a programmer easier when working with collections and sequences.
+
+- Operations on multiple collections?
+ - That's a whole bunch of loops!
+
+Using Enumerable to solve tasks leads to
+
+* Less effort
+* Less error prone code
+* Easier logic
+
+]
+---
+
+.left-column[
+## Example
+]
+
+
+.right-column[
+http://stackoverflow.com/q/10078989
+
+_"I want the first chapter of a book that's exactly 42 pages, written by an author whose name is Adams, from a library in London."_
+
+```c++
+struct Library
+{
+    std::string Name() const;
+    std::string City() const;
+    std::vector<Book*> Books() const;
+}
+
+struct Book
+{
+    std::string Name() const;
+    std::string Author() const;
+    std::vector<Chapter*> Chapters() const;
+}
+
+struct Chapter
+{
+    std::string Name() const;
+    int NumberOfPages() const;
+}
+```
+
+]
+---
+
+.left-column[
+## Example
+]
+
+
+.right-column[
+http://stackoverflow.com/q/10078989
+
+_"I want the first chapter of a book that's exactly 42 pages, written by an author whose name is Adams, from a library in London."_
+
+```c++
+auto chapter = Enumerable(libraries)
+  .where([](auto l){      return l.City(); == "London"; })
+  .selectMany([](auto l){ return l.Books(); })
+  .where([](auto b){      return b.Author() == "Adams"; })
+  .selectMany([](auto b){ return b.Chapters(); })
+  .first([](auto c){      return c.NumberOfPages == 42; });
+```
+
+]
+---
+.left-column[
+## How to use
+]
+
+.right-column[
+There are three steps required to start using Enumerable
+
+1. Clone the repository
+2. Include the header `enumerable/enumerable.h`
+3. Start hacking!
+
+A short guide and reference is available at GitHub in the readme. There are also simple examples among the unit tests.
+
+]
+---
+
+.left-column[
+## How to use
+]
+
+.right-column[
+As mentioned earlier, a source sequence is wrapped into an object by passing it to the `Enumerable(...)` function.
+
+```c++
+auto wrapped = Enumerable(vector);
+```
+There are plenty methods with various overloads to use.
+
+`select`, `where`, `concat`, `*Cast<T>`, `ofType<T>`, `distinct`, `except`, `intersect`, `*IfEmpty`, `join`, `all`, `any`, `contains`, `count`, `element*`, `first*`, `last*`, `min*`, `max*`, `sequenceEqual`, `toContainer`, `reduce`, `forEach`, `take*`, `skip*`, `selectMany`,...
+
+A full list is available at the GitHub page.
+]
+---
+.left-column[
+## Under the hood
+]
+
+.right-column[
+Three concepts of importance
+
+- Mixins
+- Curiously Recuring Template Pattern
+- Expression Templates
+]
+---
+.left-column[
+## Under the hood
+## Mixins
+]
+
+.right-column[
+What is a mixin?
+
+An encapsulated set of _common functionality_
+
+Bad example: Singletons
+
+```c++
+Logger::getInstance()->logMessage("Away we go");
+RocketEngine::getInstance()->fireRocket();
+```
+
+Common functionality: `getInstance`
+
+```c++
+struct RocketEngine : public Singleton {
+}
+```
+
+```c++
+struct Singleton
+{
+  ? getInstance() {
+    static ? theInstance = nullptr;
+	if(nullptr == theInstance) {
+	  theInstance = new ?();
+	}
+	return theInstance;
+  }
+}
+```
+]
+.footnote[.red[*] Avoid singletons]
+
+---
+.left-column[
+## Under the hood
+## Mixins
+## CRTP
+]
+
+.right-column[
+What is _Curiously Recuring Template Pattern_?
+
+A way to pass type information "the wrong way" through inheritance by using templates
+
+Bad example: Singletons
+
+```c++
+struct RocketEngine : public Singleton<RocketEngine> {
+}
+```
+
+```c++
+template <class Type>
+struct Singleton
+{
+  Type\* getInstance() {
+    static Type\* theInstance = nullptr;
+	if(nullptr == theInstance) {
+	  theInstance = new Type();
+	}
+	return theInstance;
+  }
+}
+```
+]
+.footnote[.red[*] Avoid singletons]
+
+---
+.left-column[
+## Under the hood
+## Mixins
+## CRTP
+## Expression Templates
+]
+
+.right-column[
+
+```c++
+template <typename Derived>
+struct VecInterface {
+  int operator[](int idx) {
+    return static_cast<Derived&>(*this)[idx];
+  }
+}
+
+template <int size>
+struct Vector : VecInterface<Vector>{
+  int v[size];
+  int operator[](int idx) { return v[idx]; }; 
+};
+
+template <typename T1, typename T2>
+struct VectorAdd{
+  VecInterface<T1>& t1;
+  VecInterface<T2>& t2;
+
+  VectorAdd(VecInterface<T1>& t1, VecInterface<T2>& t2);
+
+  int operator[](int idx) { return t1[idx] + t2[idx]; }; 
+};
+
+Vector<5> vec1;
+Vector<5> vec2;
+Vector<5> vec3;
+auto vecSum = VectorAdd(VectorAdd(vec1, vec2), vec3);
+```
+]
+---
+.left-column[
+## Under the hood
+## IEnumerable<T>
+]
+
+.right-column[
+`IEnumerable<Type>` at the bottom of all inheritance chainss
+
+```c++
+template <typename Type>
+struct IEnumerable
+{
+  virtual ~IEnumerable(){};
+
+  Type value();
+
+  bool moveNext();
+}
+```
+
+`value()` - current value in sequence
+
+`moveNext()` steps the sequence.
+
+Initial state - No _'current'_ value.
+
+]
+---
+.left-column[
+## Under the hood
+## Core mixin
+]
+
+.right-column[
+
+This is the core mixin type.
+
+Everything returned by `Enumerable(...)` has this mixed in.
+
+```c++
+template <typename T, typename Derived>
+struct EnumerableBase<T, Derived> : public IEnumerable<T> {
+
+  // Mixin functionality
+  template <typename Func>
+  void forEach(Func&& func)
+  {
+    while(moveNext()) {
+	  func(value());
+	}
+  }
+  
+  // ...
+}
+```
+
+```c++
+int[7] array = {1,2,3,4,5,6,7};
+Enumerable(array).forAll(printInt);
+```
+
+]
+---
+.left-column[
+## Under the hood
+## Enumerable function
+]
+
+.right-column[
+
+`Enumerable(...)` has multiple overloads.
+
+Delegate to objects implementing `IEnumerable<T>`
+
+```c++
+
+
+template<typename T, int size>
+auto Enumerable(T(&t)[size]) -> ArrayEnumerable<T>
+{
+   return ArrayEnumerable<T>(t, size);
+}
+```
+
+```c++
+template<typename T>
+struct ArrayEnumerable 
+  : public EnumerableBase<T, ArrayEnumerable<T>> {
+  
+  // reference to array
+  // size of array
+  // 'current' index in array
+}
+```
+]
+---
+.left-column[
+## Under the hood
+## Sequence transformation
+]
+
+.right-column[
+
+Delegate to objects implementing `IEnumerable<T>`
+
+```c++
+int[7] array = {1,2,3,4,5,6,7};
+Enumerable(array)
+  .where(isOdd)
+  .forAll(printInt);
+```
+
+```c++
+// where(Predicate) returns a sequence where
+//  only elements passing Predicate are present. 
+template <typename PredicateFunc>
+auto where(PredicateFunc&& predicateFunc)
+{
+  return WhereEnumerable<T, PredicateFunc, Derived>(
+    static_cast<Derived&>(*this),
+    predicateFunc);
+}
+```
+
+]
+---
+.left-column[
+## Under the hood
+## Sequence transformation
+]
+
+.right-column[
+
+```c++
+WhereEnumerable(Source &source, Func &&func)
+ : m_source(source)
+ , m_func(func)
+{
+}
+
+virtual T value() override
+{
+  return m_source.value();
+}
+
+virtual bool moveNext() override
+{
+  while (m_source.moveNext())
+  {
+    if (m_func(m_source.value()))
+    {
+      return true;
+    }
+  }
+  return false;
+}
+```
+`Source` is `ArrayEnumerable<int, 7>`
+
+]
+
+---
+.left-column[
+## Under the hood
+## Sequence transformation
+]
+
+.right-column[
+```c++
+int[7] array = {1,2,3,4,5,6,7};
+auto filtered = Enumerable(array).where(isOdd);
+
+filtered.forAll(printInt);
+```
+
+`forAll` calls `WhereEnumerable::moveNext`
+
+`WhereEnumerable::moveNext` calls `ArrayEnumerable::moveNext` until `isOdd(value())` is true
+
+`forAll` calls `printInt(value())`
+
+]
+
+---
+.left-column[
+## Under the hood
+## Composition
+]
+
+.right-column[
+```c++
+int[7] array = {1,2,3,4,5,6,7};
+auto filtered = Enumerable(array).where(isOdd);
+
+for(const auto element : filtered)
+{
+  printInt(element);
+}
+```
+
+What kind of structure does this result in?
+
+- Filtered: `WhereEnumerable`
+  - Source: `ArrayEnumerable`
+      - Array reference
+      - Array size
+      - Array index
+  - Filter-predicate
+
+Known size at compile time
+
+A _'tree'_ of operations to perform
+
+No heap allocations
+
+Nothing is evaluated until it is iterated
+]
+---
+.left-column[
+## Easily extensible
+]
+
+.right-column[
+
+Anything can be a source if it wants to!
+
+```c++
+
+struct Camera : public EnumerableBase<ImageFrame, Camera>
+{
+   Camera(std::string whichCamera);
+   virtual ImageFrame value() override;
+   virtual bool moveNext() override;
+}
+
+// Stalk people forever
+Camera cam("webcam");
+cam
+  .where(frameContainsFace)
+  .selectMany(findMatchingFacebookProfiles)
+  .where(notSeenRecently)
+  .forEach(sendNotification);
+
+// Obtain 'the average face'
+Camera cam("webcam");
+auto theAverageFace = cam
+  .where(frameContainsFace)
+  .select(centerOnFace)
+  .take(100)
+  .reduce<'+'>() / 100.f;
+  
+```
+
+]
+
+---
+.left-column[
+## Future work
+]
+
+.right-column[
+
+- More methods
+  - `takeUntil` etc
+- Enable third party mixins based on `Type` 
+  - `cam.frameContainsFace().centerOnFace()...;`
+- Runtime(?) reflection of composed tree
+- Static reflection on composed tree (flatten structure)
+- Marketing
+   
+# Getting started
+- https://github.com/DrInfiniteExplorer/enumerable
+- `#include <enumerable/enumerable.h>`
+]
+
+
+    </textarea>
+    <script src="./remark-latest.min.js">
+    </script>
+    <script>
+      var slideshow = remark.create();
+    </script>
+  </body>
+</html>
